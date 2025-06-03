@@ -38,7 +38,7 @@ function Calendar({
     const daysInMonth = lastDay.getDate()
     const startingDayOfWeek = firstDay.getDay()
 
-    const days = []
+    const days: any = []
 
     // Previous month days
     const prevMonth = new Date(year, month - 1, 0)
@@ -267,7 +267,7 @@ export default function CalendarDemo({
 }>) {
   return (
     <div className="flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+      <div className="max-w-md min-w-[10px]">
         <Calendar mode={mode} selected={selected} onSelect={onSelect} />
       </div>
     </div>

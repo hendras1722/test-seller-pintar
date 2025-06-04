@@ -2,6 +2,21 @@ import type { Metadata } from 'next'
 import Navbar from '@/components/client/Navbar'
 import ListMenu from '@/components/client/Menu'
 import Body from '@/components/client/Body'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { FolderGit2 } from 'lucide-react'
+import ArrayMap from '@/components/ArrayMap'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -13,20 +28,55 @@ export default function RootLayoutAdmin({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const menu = [
+    {
+      id: '0',
+      title: 'Category',
+      href: '/admin/category',
+      icon: () => <FolderGit2 />,
+    },
+    {
+      id: '1',
+      title: 'Article',
+      href: '/admin/article',
+      icon: () => <FolderGit2 />,
+    },
+  ]
+
   return (
     <Body>
-      <Navbar />
-      <div
-        id="sidebar_menu"
-        className="grid grid-cols-[255px_1fr] h-[calc(100vh-56px)] duration-300 ease-in-out"
-      >
-        <div className="w-full">
-          <ListMenu />
-        </div>
-        <div className="h-full w-full bg-white border-l-2 border-gray-200 relative z-10 p-5 overflow-auto dark:bg-black dark:shadow-white dark:shadow-lg dark:border-white">
-          <div className="shadow-md p-5 rounded-lg">{children}</div>
-        </div>
-      </div>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader />
+          <SidebarContent>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <ArrayMap
+                  of={menu}
+                  render={(item, index) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <a href={item.href}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+                />
+              </SidebarMenu>
+            </SidebarGroupContent>
+            <SidebarGroup />
+          </SidebarContent>
+        </Sidebar>
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <div className="p-2">
+            <SidebarTrigger />
+          </div>
+          <hr className="-ml-5 -mr-5" />
+          <div className=" flex-1 p-5">{children}</div>
+        </main>
+      </SidebarProvider>
     </Body>
   )
 }

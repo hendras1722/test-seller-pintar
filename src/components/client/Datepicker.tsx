@@ -6,7 +6,11 @@ import { format } from 'date-fns'
 import React from 'react'
 import CalendarComponent from './CalendarComponent'
 
-export default function DatePicker({ selected = new Date(), onSelect }) {
+export default function DatePicker({
+  selected = new Date(),
+  onSelect,
+  className,
+}) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -21,7 +25,7 @@ export default function DatePicker({ selected = new Date(), onSelect }) {
           {selected ? format(selected, 'PPP') : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className={cn(className, 'lg:w-[400px]  w-[350px]')}>
         <CalendarComponent
           mode="single"
           selected={selected}

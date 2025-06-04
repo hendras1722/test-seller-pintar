@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { useAxios } from '@/composable/useAxios'
 import { notify } from '@/utils/Notify'
 import { useRouter } from 'next/navigation'
+import { setAuthToken } from '@/utils/axios'
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -49,7 +50,8 @@ export default function LoginClient() {
         duration: 3000,
         className: 'border border-green-500 bg-transparent text-green-800',
       })
-      document.cookie = `token=${data?.token}`
+
+      setAuthToken(data?.token as string)
       if (data?.role.toLowerCase() === 'admin') {
         router.push('/admin/dashboard')
       }

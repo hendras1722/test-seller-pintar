@@ -9,15 +9,32 @@ import DatePicker from '@/components/client/Datepicker'
 import { Pencil, Search, Trash2 } from 'lucide-react'
 import { ListCategory, ResultGetCategory } from '@/type/category'
 import { debounce } from 'radash'
-import { getCategory } from '@/api/category'
+import { editCategory, getCategory } from '@/api/category'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import ModalComponent from '@/components/client/Modal'
+import { useAxios } from '@/composable/useAxios'
+import { apiEndpoint } from '@/type/endpoint'
+import { notify } from '@/utils/Notify'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  // FormMessage,
+} from '@/components/ui/form'
+import { twMerge } from 'tailwind-merge'
+import { If } from '@/components/if'
+import PaginationComponents from '@/components/client/PaginationComponents'
 
-interface ItemType {
-  name: string
-  category: string
-  price: string
-  created_at: Date
-  actions?: string
-}
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: 'Category must be at least 3 characters.',
+  }),
+})
 
 export default function List({
   category,
@@ -25,6 +42,19 @@ export default function List({
   const [date, setDate] = React.useState<Date>()
   const [data, setData] = React.useState(category)
   const [params, setParams] = React.useState({ page: 1, limit: 10, search: '' })
+  const [open, setOpen] = React.useState(false)
+  const [edit, setEdit] = React.useState({
+    isEdit: false,
+    data: {} as ListCategory,
+  })
+
+  const axios = useAxios()
+
+  useEffect(() => {
+    if (!open) {
+      form.reset()
+    }
+  }, [open])
 
   const listBreadcrumb = [
     { label: 'Dashboard', href: '/admin/dashboard', disabled: true },
@@ -45,12 +75,12 @@ export default function List({
       render: (item) => {
         return (
           <>
-            <Button className="bg-blue-500 mr-5">
+            <Button className="bg-blue-500 mr-5" onClick={() => onEdit(item)}>
               {' '}
               <Pencil />
               Edit
             </Button>{' '}
-            <Button className="bg-red-500">
+            <Button className="bg-red-500" onClick={() => onDelete(item.id)}>
               {' '}
               <Trash2 />
               Delete
@@ -60,6 +90,39 @@ export default function List({
       },
     },
   ]
+
+  function getListCategory(e?: number) {
+    getCategory({
+      ...params,
+      page: e ?? params.page,
+    }).then((res) => {
+      setData(res)
+    })
+  }
+
+  const onDelete = async (e) => {
+    const { error } = await axios('/categories/' + e, {
+      method: 'DELETE',
+    })
+    if (!error) {
+      await notify({
+        variant: 'success',
+        title: 'Success',
+        description: `Category deleted successfully`,
+        duration: 3000,
+        className: 'border border-green-500 bg-transparent text-green-800',
+      })
+      getListCategory()
+      return
+    }
+    await notify({
+      variant: 'error',
+      title: 'Error',
+      description: error?.message,
+      duration: 3000,
+      className: 'border border-red-500 bg-transparent text-red-800',
+    })
+  }
 
   const onChangeSearch = debounce({ delay: 3000 }, async (event) => {
     setParams(() => {
@@ -76,19 +139,154 @@ export default function List({
     setData(res)
   })
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+    },
+  })
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (edit.isEdit) {
+      const { error } = await editCategory(values, edit.data.id)
+      if (!error) {
+        await notify({
+          variant: 'success',
+          title: 'Success',
+          description: 'Category has been updated',
+          duration: 3000,
+          className: 'border border-green-500 bg-transparent text-green-800',
+        })
+        setOpen(false)
+        getListCategory()
+        form.reset()
+        setEdit({ isEdit: false, data: {} as ListCategory })
+        return
+      }
+      await notify({
+        variant: 'error',
+        title: 'Error',
+        description: error?.message,
+        duration: 3000,
+        className: 'border border-red-500 bg-transparent text-red-800',
+      })
+      return
+    }
+    const { error } = await axios('/categories', {
+      method: 'POST',
+      body: values,
+    })
+    if (!error) {
+      await notify({
+        variant: 'success',
+        title: 'Success',
+        description: 'Category created successfully',
+        duration: 3000,
+        className: 'border border-green-500 bg-transparent text-green-800',
+      })
+      setOpen(false)
+      getListCategory()
+      form.reset()
+      return
+    }
+    await notify({
+      variant: 'error',
+      title: 'Error',
+      description: error?.message,
+      duration: 3000,
+      className: 'border border-red-500 bg-transparent text-red-800',
+    })
+  }
+
+  function onEdit(e: ListCategory) {
+    form.setValue('name', e.name)
+    setEdit({
+      isEdit: true,
+      data: e,
+    })
+    setOpen(true)
+  }
+
   return (
     <Fragment>
       <BreadcrumbClient items={listBreadcrumb} />
       <div className="mt-8">
-        <div className="flex gap-4 items-center mb-5">
+        <div className="sm:flex gap-4 items-center mb-5">
           <div className="relative w-full">
             <Input onChange={onChangeSearch} className="pl-10 w-full" />
             <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
           </div>
-          <DatePicker selected={date} onSelect={setDate} />
-          <Button className="bg-blue-500">Add Category</Button>
+          <DatePicker selected={date} onSelect={setDate} className="mb-5" />
+          <ModalComponent
+            open={open}
+            onOpenChange={setOpen}
+            title={'Add Category'}
+          >
+            <ModalComponent.ButtonModal>
+              <Button className="bg-blue-500">Add Category</Button>
+            </ModalComponent.ButtonModal>
+            <ModalComponent.Description>
+              <div>
+                <Form {...form}>
+                  <form id="my-form">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field, formState }) => (
+                        <FormItem>
+                          <FormLabel>name</FormLabel>
+                          <FormControl>
+                            <Input
+                              className={twMerge(
+                                form.formState.errors.name &&
+                                  'border border-red-500 '
+                              )}
+                              placeholder="name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <If condition={!!formState.errors.name?.message}>
+                            <FormMessage className="text-red-500">
+                              {form.formState.errors.name?.message}
+                            </FormMessage>
+                          </If>
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+              {/* <FormCategory form={form}></FormCategory> */}
+            </ModalComponent.Description>
+
+            <ModalComponent.Footer>
+              <div className=" w-full grid place-items-center">
+                <Button
+                  color="green"
+                  type="submit"
+                  className="w-full bg-green-500 mt-3 hover:bg-green-700 shadow-none"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  Submit
+                </Button>
+                <Button
+                  className="bg-blue-500 mt-3 bg-transparent text-black hover:bg-transparent shadow-none"
+                  onClick={() => setOpen(false)}
+                >
+                  close
+                </Button>
+              </div>
+            </ModalComponent.Footer>
+          </ModalComponent>
         </div>
         <TableComponent fields={fields} items={data.data || []} />
+        <PaginationComponents
+          model={getListCategory}
+          page={params.page}
+          setParams={setParams}
+          pageSize={params.limit ?? 10}
+          totalCount={data.totalData}
+        />
       </div>
     </Fragment>
   )

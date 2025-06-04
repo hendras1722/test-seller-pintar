@@ -17,7 +17,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
   const variantConfig =
     NOTIFICATION_VARIANTS[variant] || NOTIFICATION_VARIANTS.success
-  console.log(variantConfig)
+
   const IconComponent =
     NOTIFICATION_VARIANTS[variant].icon || variantConfig.icon
 

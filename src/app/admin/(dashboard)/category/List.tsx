@@ -130,11 +130,29 @@ export default function List({
         search: event.target.value,
       }
     })
-    const res = await getCategory({
-      ...params,
-      search: event.target.value,
-    })
-    setData(res)
+    try {
+      const res = await getCategory({
+        ...params,
+        search: event.target.value,
+      })
+      setData(res)
+    } catch (error) {
+      setParams(() => {
+        return {
+          limit: 10,
+          page: 1,
+          search: event.target.value,
+        }
+      })
+      setData((prevState) => {
+        return {
+          ...prevState,
+          data: prevState.data.filter((item) =>
+            item.name.toLowerCase().includes(event.target.value.toLowerCase())
+          ),
+        }
+      })
+    }
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -277,13 +295,15 @@ export default function List({
           </ModalComponent>
         </div>
         <TableComponent fields={fields} items={data.data || []} />
-        <PaginationComponents
-          model={getListCategory}
-          page={params.page}
-          setParams={setParams}
-          pageSize={params.limit ?? 10}
-          totalCount={data.totalData}
-        />
+        <div className="mt-5">
+          <PaginationComponents
+            model={getListCategory}
+            page={params.page}
+            setParams={setParams}
+            pageSize={params.limit ?? 10}
+            totalCount={data.totalData}
+          />
+        </div>
       </div>
     </Fragment>
   )

@@ -13,7 +13,6 @@ export default function Category() {
       createdAtEnd: format(new Date(), 'yyyy-MM-dd'),
     })
   )
-  console.log(resultArticle)
   return (
     <Suspense fallback={<div>Loading article...</div>}>
       <List article={resultArticle} />

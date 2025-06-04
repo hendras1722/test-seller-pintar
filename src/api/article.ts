@@ -1,5 +1,5 @@
 import { useAxios } from '@/composable/useAxios'
-import { ResutGetArticles } from '@/type/article'
+import { ListArticles, ResutGetArticles } from '@/type/article'
 import { apiEndpoint } from '@/type/endpoint'
 import { axiosFetch } from '@/utils/axios'
 
@@ -7,6 +7,9 @@ export const getArticle = (params?): Promise<ResutGetArticles> => {
   return axiosFetch.get<ResutGetArticles>(apiEndpoint.GET_ARTICLE, {
     params,
   })
+}
+export const getArticleDetail = (query?): Promise<ListArticles> => {
+  return axiosFetch.get<ListArticles>(apiEndpoint.GET_ARTICLE + '/' + query)
 }
 
 

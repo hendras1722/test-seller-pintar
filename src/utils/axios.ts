@@ -92,7 +92,6 @@ const getToken = async (): Promise<string | undefined> => {
     } else {
       // Client-side
       const token = Cookies.get('token')
-      console.log('Client token:', token ? 'exists' : 'not found')
       return token
     }
   } catch (error) {
@@ -193,5 +192,8 @@ export const setAuthToken = (token: string) => {
 export const clearAuthToken = () => {
   if (typeof window !== 'undefined') {
     Cookies.remove('token')
+    fetch('/api/logout', {
+      method: 'POST', // Atau metode HTTP yang Anda gunakan
+    })
   }
 }

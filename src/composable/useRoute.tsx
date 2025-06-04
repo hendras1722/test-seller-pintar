@@ -1,16 +1,21 @@
 'use client'
-import { useParams, usePathname } from 'next/navigation'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export function useRoute() {
   const pathname = usePathname()
   const params = useParams()
+  const searchParams = useSearchParams()
 
-  const [route, setRoute] = useState({ pathname, params })
+  const [route, setRoute] = useState({
+    pathname,
+    params,
+    searchParams,
+  })
 
   useEffect(() => {
-    setRoute({ pathname, params })
-  }, [pathname, params])
+    setRoute({ pathname, params, searchParams })
+  }, [pathname, params, searchParams])
 
   return route
 }

@@ -441,13 +441,15 @@ export default function List({
           </ModalComponent>
         </div>
         <TableComponent fields={fields} items={data.data || []} />
-        <PaginationComponents
-          model={getListArticle}
-          page={params.page}
-          setParams={setParams}
-          pageSize={params.limit ?? 10}
-          totalCount={data.total}
-        />
+        <div className="mt-5">
+          <PaginationComponents
+            model={getListArticle}
+            page={params.page}
+            setParams={setParams}
+            pageSize={params.limit ?? 10}
+            totalCount={data.total}
+          />
+        </div>
       </div>
     </Fragment>
   )

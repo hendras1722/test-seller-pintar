@@ -22,7 +22,7 @@ type BreakpointResult<T extends BreakpointRecord> = {
 export const useBreakpoints = <T extends BreakpointRecord>(
   breakpoints?: T
 ): BreakpointResult<T extends undefined ? typeof defaultBreakpoints : T> => {
-  const bp = (breakpoints || defaultBreakpoints) as T extends undefined
+  const bp = (breakpoints ?? defaultBreakpoints) as T extends undefined
     ? typeof defaultBreakpoints
     : T
 
@@ -39,20 +39,17 @@ export const useBreakpoints = <T extends BreakpointRecord>(
 
     window.addEventListener('resize', handleResize)
 
-    // Set initial value
     handleResize()
 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Create boolean values for each breakpoint
   const breakpointStates = {} as any
 
   Object.keys(bp).forEach((key) => {
     breakpointStates[key] = windowWidth >= bp[key]
   })
 
-  // Add current breakpoint name
   const getCurrentBreakpoint = () => {
     const sortedBreakpoints = Object.entries(bp).sort(
       ([, a], [, b]) => (b as number) - (a as number)

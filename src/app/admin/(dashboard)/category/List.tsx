@@ -118,7 +118,7 @@ export default function List({
       title: 'Error',
       description: error?.message,
       duration: 3000,
-      className: 'border border-red-500 bg-transparent text-red-800',
+      className: 'border border-red-500 bg-white text-red-800',
     })
   }
 
@@ -184,7 +184,7 @@ export default function List({
         title: 'Error',
         description: error?.message,
         duration: 3000,
-        className: 'border border-red-500 bg-transparent text-red-800',
+        className: 'border border-red-500 bg-white text-red-800',
       })
       return
     }
@@ -210,7 +210,7 @@ export default function List({
       title: 'Error',
       description: error?.message,
       duration: 3000,
-      className: 'border border-red-500 bg-transparent text-red-800',
+      className: 'border border-red-500 bg-white text-red-800',
     })
   }
 

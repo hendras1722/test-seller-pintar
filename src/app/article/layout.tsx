@@ -1,4 +1,4 @@
-import Body from '@/components/layouts/Body'
+import Body from '@/components/client/Body'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -11,5 +11,9 @@ export default function RootLayoutAdmin({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <Body>{children}</Body>
+  return (
+    <Body>
+      <div className="min-h-screen">{children}</div>
+    </Body>
+  )
 }

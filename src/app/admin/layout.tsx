@@ -15,7 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import { FolderGit2 } from 'lucide-react'
+import { FolderGit2, Newspaper } from 'lucide-react'
 import ArrayMap from '@/components/ArrayMap'
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default function RootLayoutAdmin({
       id: '1',
       title: 'Article',
       href: '/admin/article',
-      icon: () => <FolderGit2 />,
+      icon: () => <Newspaper />,
     },
   ]
 

@@ -19,6 +19,7 @@ import {
 // } from '@/components/ui/select'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { cn } from '@/utils/lib'
+import { If } from '../if'
 // import { cn } from '@/lib/utils'
 
 export interface PaginationWithLinksProps {
@@ -184,33 +185,37 @@ export default function PaginationComponents({
       <Pagination className={cn({ 'md:justify-end': pageSizeSelectOptions })}>
         <PaginationContent className="max-sm:gap-0">
           <PaginationItem>
-            <PaginationPrevious
-              onClick={() => {
-                setParams({ page: Math.max(page - 1, 1) })
-                model(Math.max(page - 1, 1))
-              }}
-              aria-disabled={page === 1}
-              tabIndex={page === 1 ? -1 : undefined}
-              className={
-                page === 1 ? 'pointer-events-none opacity-50' : undefined
-              }
-            />
+            <If condition={page > 1}>
+              <PaginationPrevious
+                onClick={() => {
+                  setParams({ page: Math.max(page - 1, 1) })
+                  model(Math.max(page - 1, 1))
+                }}
+                aria-disabled={page === 1}
+                tabIndex={page === 1 ? -1 : undefined}
+                className={
+                  page === 1 ? 'pointer-events-none opacity-50' : undefined
+                }
+              />
+            </If>
           </PaginationItem>
           {renderPageNumbers()}
           <PaginationItem>
-            <PaginationNext
-              onClick={() => {
-                setParams({ page: Math.min(page + 1, totalPageCount) })
-                model(Math.min(page + 1, totalPageCount))
-              }}
-              aria-disabled={page === totalPageCount}
-              tabIndex={page === totalPageCount ? -1 : undefined}
-              className={
-                page === totalPageCount
-                  ? 'pointer-events-none opacity-50'
-                  : undefined
-              }
-            />
+            <If condition={page < totalPageCount}>
+              <PaginationNext
+                onClick={() => {
+                  setParams({ page: Math.min(page + 1, totalPageCount) })
+                  model(Math.min(page + 1, totalPageCount))
+                }}
+                aria-disabled={page === totalPageCount}
+                tabIndex={page === totalPageCount ? -1 : undefined}
+                className={
+                  page === totalPageCount
+                    ? 'pointer-events-none opacity-50'
+                    : undefined
+                }
+              />
+            </If>
           </PaginationItem>
         </PaginationContent>
       </Pagination>

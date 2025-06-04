@@ -1,17 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const cn = (...classes) => classes.filter(Boolean).join(' ')
 
-function Calendar({
+// Utility functions untuk menangani tanggal dengan benar
+const getTodayInLocalTimezone = () => {
+  const now = new Date()
+  // Buat tanggal baru dengan komponen tahun, bulan, tanggal saja (tanpa waktu)
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+const createDateAtMidnight = (year, month, date) => {
+  // Selalu buat tanggal pada midnight lokal untuk konsistensi
+  return new Date(year, month, date)
+}
+
+export default function Calendar({
   className = '',
   showOutsideDays = true,
   selected,
   onSelect,
-  mode = 'single', // 'single' or 'range'
+  mode = 'single',
   ...props
 }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [debugInfo, setDebugInfo] = useState({})
+
+  // Debug informasi tanggal
+  useEffect(() => {
+    const now = new Date()
+    const todayLocal = getTodayInLocalTimezone()
+
+    setDebugInfo({
+      rawDate: now.toString(),
+      utcDate: now.toISOString(),
+      localDateOnly: todayLocal.toString(),
+      localISOString: todayLocal.toISOString(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timezoneOffset: now.getTimezoneOffset(),
+    })
+  }, [])
 
   const months = [
     'January',
@@ -38,27 +66,34 @@ function Calendar({
     const daysInMonth = lastDay.getDate()
     const startingDayOfWeek = firstDay.getDay()
 
-    const days: any = []
+    const days = []
+    const today = getTodayInLocalTimezone()
 
     // Previous month days
     const prevMonth = new Date(year, month - 1, 0)
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+      const dayDate = createDateAtMidnight(
+        year,
+        month - 1,
+        prevMonth.getDate() - i
+      )
       days.push({
         date: prevMonth.getDate() - i,
         isCurrentMonth: false,
         isToday: false,
-        fullDate: new Date(year, month - 1, prevMonth.getDate() - i),
+        fullDate: dayDate,
       })
     }
 
     // Current month days
-    const today = new Date()
     for (let day = 1; day <= daysInMonth; day++) {
-      const dayDate = new Date(year, month, day)
+      const dayDate = createDateAtMidnight(year, month, day)
+      const isToday = dayDate.getTime() === today.getTime()
+
       days.push({
         date: day,
         isCurrentMonth: true,
-        isToday: dayDate.toDateString() === today.toDateString(),
+        isToday,
         fullDate: dayDate,
       })
     }
@@ -66,11 +101,12 @@ function Calendar({
     // Next month days
     const remainingDays = 42 - days.length
     for (let day = 1; day <= remainingDays; day++) {
+      const dayDate = createDateAtMidnight(year, month + 1, day)
       days.push({
         date: day,
         isCurrentMonth: false,
         isToday: false,
-        fullDate: new Date(year, month + 1, day),
+        fullDate: dayDate,
       })
     }
 
@@ -92,40 +128,36 @@ function Calendar({
       onSelect(day.fullDate)
     } else if (mode === 'range') {
       if (!selected || (!selected.from && !selected.to)) {
-        // First selection - set as start date
         onSelect({ from: day.fullDate, to: null })
       } else if (selected.from && !selected.to) {
-        // Second selection - set as end date
         const startDate = selected.from
         const endDate = day.fullDate
 
         if (endDate < startDate) {
-          // If end date is before start date, swap them
           onSelect({ from: endDate, to: startDate })
         } else {
           onSelect({ from: startDate, to: endDate })
         }
       } else {
-        // Both dates are selected, start new selection
         onSelect({ from: day.fullDate, to: null })
       }
     }
   }
 
   const isDateInRange = (date, range) => {
-    if (!range || !range.from) return false
+    if (!range || !range.from || !date) return false
     if (!range.to) return false
     return date >= range.from && date <= range.to
   }
 
   const isDateRangeStart = (date, range) => {
-    if (!range || !range.from) return false
-    return date.toDateString() === range.from.toDateString()
+    if (!range || !range.from || !date) return false
+    return date.getTime() === range.from.getTime()
   }
 
   const isDateRangeEnd = (date, range) => {
-    if (!range || !range.to) return false
-    return date.toDateString() === range.to.toDateString()
+    if (!range || !range.to || !date) return false
+    return date.getTime() === range.to.getTime()
   }
 
   const getDayClasses = (day) => {
@@ -134,7 +166,6 @@ function Calendar({
       'hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
     ]
 
-    // Base text color
     if (day.isCurrentMonth) {
       classes.push('text-gray-900 hover:text-gray-900')
     } else {
@@ -142,9 +173,10 @@ function Calendar({
     }
 
     if (mode === 'single') {
-      // Single mode styling
       const isSelected =
-        selected && day.fullDate.toDateString() === selected.toDateString()
+        selected &&
+        day.fullDate &&
+        day.fullDate.getTime() === selected.getTime()
 
       if (day.isToday && day.isCurrentMonth && !isSelected) {
         classes.push('bg-blue-50 text-blue-700 font-bold ring-2 ring-blue-200')
@@ -154,7 +186,6 @@ function Calendar({
         classes.push('bg-blue-600 text-white hover:bg-blue-700 font-semibold')
       }
     } else if (mode === 'range') {
-      // Range mode styling
       const isInRange = isDateInRange(day.fullDate, selected)
       const isRangeStart = isDateRangeStart(day.fullDate, selected)
       const isRangeEnd = isDateRangeEnd(day.fullDate, selected)
@@ -172,7 +203,6 @@ function Calendar({
       }
 
       if (isRangeStart && isRangeEnd) {
-        // Same day selected as start and end
         classes.push('rounded-lg')
       } else if (isRangeStart) {
         classes.push('rounded-l-lg rounded-r-none')
@@ -190,7 +220,7 @@ function Calendar({
   } ${currentMonth.getFullYear()}`
 
   return (
-    <div className={cn('p-6 rounded-xl max-w-sm mx-auto ', className)}>
+    <div className={cn('p-6 rounded-xl max-w-2xl ', className)}>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <button
@@ -233,42 +263,11 @@ function Calendar({
             className={getDayClasses(day)}
           >
             {day.date}
-            {day.isToday &&
-              day.isCurrentMonth &&
-              mode === 'single' &&
-              !(
-                selected &&
-                day.fullDate.toDateString() === selected.toDateString()
-              ) && (
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
-              )}
-            {day.isToday &&
-              day.isCurrentMonth &&
-              mode === 'range' &&
-              !isDateInRange(day.fullDate, selected) && (
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
-              )}
+            {day.isToday && day.isCurrentMonth && (
+              <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
+            )}
           </button>
         ))}
-      </div>
-    </div>
-  )
-}
-
-// Demo Component
-export default function CalendarDemo({
-  mode = 'single',
-  selected,
-  onSelect,
-}: Readonly<{
-  mode?: 'single' | 'range'
-  selected?: Date | { from: Date; to: Date }
-  onSelect?: (date: Date) => void
-}>) {
-  return (
-    <div className="flex items-center justify-center p-4">
-      <div className="max-w-md min-w-[10px]">
-        <Calendar mode={mode} selected={selected} onSelect={onSelect} />
       </div>
     </div>
   )

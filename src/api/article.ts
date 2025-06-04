@@ -12,7 +12,7 @@ export const getArticle = (params?): Promise<ResutGetArticles> => {
 
 export const editArticle = async (body?, query?) => {
    const axios = useAxios<{ token: string; role: string }>()
-   const { error ,data} = await axios('/categories/' + query, {
+   const { error ,data} = await axios('/articles/' + query, {
      method: 'PUT',
      body: body,
    })

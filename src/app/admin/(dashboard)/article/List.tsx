@@ -39,11 +39,18 @@ import {
 } from '@/components/ui/select'
 import ArrayMap from '@/components/ArrayMap'
 import RichTextEditor from '@/components/client/tiptap'
+import { format, subDays } from 'date-fns'
 
 export default function List({
   article,
 }: Readonly<{ article: ResutGetArticles }>) {
-  const [date, setDate] = React.useState<Date>()
+  const yesterday = subDays(new Date(), 1) // Mengurangi 1 hari menggunakan date-fns
+
+  const formattedYesterday = format(yesterday, 'yyyy-MM-dd')
+  const [date, setDate] = React.useState<{ from: Date; to: Date }>({
+    from: new Date(formattedYesterday),
+    to: new Date(),
+  })
   const [data, setData] = React.useState(article)
   const [params, setParams] = React.useState({ page: 1, limit: 10, title: '' })
   const [open, setOpen] = React.useState(false)
@@ -60,7 +67,6 @@ export default function List({
   }, [open])
 
   const handleUploadImage = async (file: File): Promise<string> => {
-    // Simulate image upload - in real app, upload to your server
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(URL.createObjectURL(file))
@@ -88,7 +94,7 @@ export default function List({
   })
 
   const listBreadcrumb = [
-    { label: 'Dashboard', href: '/admin/dashboard', disabled: true },
+    { label: 'Dashboard', href: '', disabled: true },
     { label: 'Article', href: '/admin/article' },
   ]
   const fields = [
@@ -118,6 +124,11 @@ export default function List({
       ),
     },
     {
+      label: 'Category',
+      key: 'category',
+      render: (item) => item.category.name,
+    },
+    {
       label: 'Image',
       key: 'imageUrl',
       render: (item, index) => (
@@ -129,6 +140,7 @@ export default function List({
         </div>
       ),
     },
+
     {
       label: 'Actions',
       key: 'actions',
@@ -162,13 +174,15 @@ export default function List({
     getArticle({
       ...params,
       page: e ?? params.page,
+      createdAtStart: format(date.from, 'yyyy-MM-dd'),
+      createdAtEnd: format(date.to, 'yyyy-MM-dd'),
     }).then((res) => {
       setData(res)
     })
   }
 
   const onDelete = async (e) => {
-    const { error } = await axios('/categories/' + e, {
+    const { error } = await axios('/articles/' + e, {
       method: 'DELETE',
     })
     if (!error) {
@@ -177,7 +191,7 @@ export default function List({
         title: 'Success',
         description: `Article deleted successfully`,
         duration: 3000,
-        className: 'border border-green-500 bg-transparent text-green-800',
+        className: 'border border-green-500 bg-white text-green-800',
       })
       getListArticle()
       return
@@ -187,11 +201,11 @@ export default function List({
       title: 'Error',
       description: error?.message,
       duration: 3000,
-      className: 'border border-red-500 bg-transparent text-red-800',
+      className: 'border border-red-500 bg-white text-red-800',
     })
   }
 
-  const onChangeSearch = debounce({ delay: 3000 }, async (event) => {
+  const onChangeSearch = debounce({ delay: 500 }, async (event) => {
     setParams({
       limit: 10,
       page: 1,
@@ -222,7 +236,7 @@ export default function List({
           title: 'Success',
           description: 'Article has been updated',
           duration: 3000,
-          className: 'border border-green-500 bg-transparent text-green-800',
+          className: 'border border-green-500 bg-white text-green-800',
         })
         setOpen(false)
         getListArticle()
@@ -235,7 +249,7 @@ export default function List({
         title: 'Error',
         description: error?.message,
         duration: 3000,
-        className: 'border border-red-500 bg-transparent text-red-800',
+        className: 'border border-red-500 bg-white text-red-800',
       })
       return
     }
@@ -249,7 +263,7 @@ export default function List({
         title: 'Success',
         description: 'Article created successfully',
         duration: 3000,
-        className: 'border border-green-500 bg-transparent text-green-800',
+        className: 'border border-green-500 bg-white text-green-800',
       })
       setOpen(false)
       getListArticle()
@@ -261,12 +275,14 @@ export default function List({
       title: 'Error',
       description: error?.message,
       duration: 3000,
-      className: 'border border-red-500 bg-transparent text-red-800',
+      className: 'border border-red-500 bg-white text-red-800',
     })
   }
 
   function onEdit(e: ListArticles) {
-    // form.setValue('name', e.)
+    form.setValue('title', e.title)
+    form.setValue('content', e.content)
+    form.setValue('categoryId', e.categoryId)
     setEdit({
       isEdit: true,
       data: e,
@@ -283,7 +299,11 @@ export default function List({
             <Input onChange={onChangeSearch} className="pl-10 w-full" />
             <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
           </div>
-          <DatePicker selected={date} onSelect={setDate} className="mb-5" />
+          <DatePicker
+            refetch={getListArticle}
+            selected={date}
+            onSelect={setDate}
+          />
           <ModalComponent
             open={open}
             onOpenChange={setOpen}
@@ -332,14 +352,6 @@ export default function List({
                               onChange={field.onChange}
                               uploadImageFn={handleUploadImage}
                             />
-                            {/* <Input
-                              className={twMerge(
-                                form.formState.errors.content &&
-                                  'border border-red-500 '
-                              )}
-                              placeholder="content"
-                              {...field}
-                            /> */}
                           </FormControl>
                           <If condition={!!formState.errors.content?.message}>
                             <FormMessage className="text-red-500">

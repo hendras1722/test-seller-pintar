@@ -81,7 +81,7 @@ export async function middleware(request: NextRequest) {
 
   if (token && isLoginPage) {
     const redirectUrl = new URL(request.url).searchParams.get('redirect')
-    const targetUrl = redirectUrl ?? '/admin/dashboard'
+    const targetUrl = redirectUrl ?? '/admin/category'
     return NextResponse.redirect(new URL(targetUrl, request.url))
   }
 

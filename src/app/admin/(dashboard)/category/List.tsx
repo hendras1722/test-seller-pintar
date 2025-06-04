@@ -5,7 +5,6 @@ import BreadcrumbClient from '@/components/client/Breadcumb'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import DatePicker from '@/components/client/Datepicker'
 import { Pencil, Search, Trash2 } from 'lucide-react'
 import { ListCategory, ResultGetCategory } from '@/type/category'
 import { debounce } from 'radash'
@@ -39,7 +38,6 @@ const formSchema = z.object({
 export default function List({
   category,
 }: Readonly<{ category: ResultGetCategory }>) {
-  const [date, setDate] = React.useState<Date>()
   const [data, setData] = React.useState(category)
   const [params, setParams] = React.useState({ page: 1, limit: 10, search: '' })
   const [open, setOpen] = React.useState(false)
@@ -57,7 +55,7 @@ export default function List({
   }, [open])
 
   const listBreadcrumb = [
-    { label: 'Dashboard', href: '/admin/dashboard', disabled: true },
+    { label: 'Dashboard', href: '', disabled: true },
     { label: 'Category', href: '/admin/category' },
   ]
   const fields = [
@@ -110,7 +108,7 @@ export default function List({
         title: 'Success',
         description: `Category deleted successfully`,
         duration: 3000,
-        className: 'border border-green-500 bg-transparent text-green-800',
+        className: 'border border-green-500 bg-white text-green-800',
       })
       getListCategory()
       return
@@ -124,7 +122,7 @@ export default function List({
     })
   }
 
-  const onChangeSearch = debounce({ delay: 3000 }, async (event) => {
+  const onChangeSearch = debounce({ delay: 500 }, async (event) => {
     setParams(() => {
       return {
         limit: 10,
@@ -155,7 +153,7 @@ export default function List({
           title: 'Success',
           description: 'Category has been updated',
           duration: 3000,
-          className: 'border border-green-500 bg-transparent text-green-800',
+          className: 'border border-green-500 bg-white text-green-800',
         })
         setOpen(false)
         getListCategory()
@@ -182,7 +180,7 @@ export default function List({
         title: 'Success',
         description: 'Category created successfully',
         duration: 3000,
-        className: 'border border-green-500 bg-transparent text-green-800',
+        className: 'border border-green-500 bg-white text-green-800',
       })
       setOpen(false)
       getListCategory()
@@ -216,7 +214,6 @@ export default function List({
             <Input onChange={onChangeSearch} className="pl-10 w-full" />
             <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
           </div>
-          <DatePicker selected={date} onSelect={setDate} className="mb-5" />
           <ModalComponent
             open={open}
             onOpenChange={setOpen}

@@ -48,12 +48,12 @@ export default function LoginClient() {
         title: 'Success',
         description: 'Berhasil login',
         duration: 3000,
-        className: 'border border-green-500 bg-transparent text-green-800',
+        className: 'border border-green-500 bg-white text-green-800',
       })
 
       setAuthToken(data?.token as string)
       if (data?.role.toLowerCase() === 'admin') {
-        router.push('/admin/dashboard')
+        router.push('/admin/category')
       }
 
       return

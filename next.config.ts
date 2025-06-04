@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/',
-        destination: '/admin/dashboard',
+        destination: '/admin/category',
         permanent: true,
       },
     ]

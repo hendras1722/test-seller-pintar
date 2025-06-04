@@ -51,7 +51,9 @@ export default function ModalComponent({
 const ButtonModal = ({ children }) => (
   <DialogTrigger asChild>{children}</DialogTrigger>
 )
-const Description = ({ children }) => <div>{children}</div>
+const Description = ({ children }) => (
+  <div className="max-h-[500px] overflow-auto">{children}</div>
+)
 const Footer = ({ children }) => <DialogFooter>{children}</DialogFooter>
 
 ModalComponent.ButtonModal = ButtonModal

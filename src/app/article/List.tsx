@@ -23,7 +23,12 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
   const { md } = useBreakpoints(breakpoints)
   const route = useRoute()
   const router = useRouter()
-  const [item, setItem] = useState<ListArticles[]>([])
+  const [item, setItem] = useState<ResutGetArticles>({
+    data: [],
+    total: 0,
+    page: 0,
+    limit: 0,
+  })
   const [params, setParams] = useState({ page: 1, limit: 10, search: '' })
 
   function transformData(data: ListArticles[]) {
@@ -74,25 +79,34 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
       route.searchParams.get('title') ||
       route.searchParams.get('page')
     ) {
-      const result = await getArticle({
-        page: route.searchParams.get('page') ?? params.page,
+      let searchParams = {
+        page: route.searchParams.get('page') ?? undefined,
         title: route.searchParams.get('title') ?? undefined,
         category: route.searchParams.get('category') ?? undefined,
+      }
+      const result = await getArticle({
+        page: searchParams.page ?? undefined,
+        title: searchParams.title ?? undefined,
+        category: searchParams.category ?? undefined,
       })
-      setItem(result.data)
+      setItem(result)
     } else {
-      setItem(data.data)
+      setItem(data)
     }
   }
   useEffect(() => {
-    fetchData()
-  }, [route])
+    if (!item.data.length) {
+      setItem(data)
+    } else {
+      fetchData()
+    }
+  }, [router])
   return (
     <Fragment>
       <If condition={md}>
         <div className="rounded mt-8 lg:px-[263px] py-3">
           <ArrayMap
-            of={transformData(item)}
+            of={transformData(item.data)}
             render={(item: any[], index: number) => (
               <div key={index} className="mt-5">
                 <If condition={item.length === 1}>
@@ -204,7 +218,7 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
           page={params.page}
           setParams={setParams}
           pageSize={params.limit ?? 10}
-          totalCount={data.total}
+          totalCount={item.total}
         />
       </div>
     </Fragment>

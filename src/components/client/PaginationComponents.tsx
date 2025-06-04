@@ -31,7 +31,7 @@ export interface PaginationWithLinksProps {
   pageSize: number
   page: number
   pageSearchParam?: string
-  model: (page: number) => void
+  model?: (page: number) => void
   setParams: (params: any) => void
 }
 
@@ -94,7 +94,9 @@ export default function PaginationComponents({
             <PaginationLink
               onClick={() => {
                 setParams({ page: i })
-                model(i)
+                if (model) {
+                  model(i)
+                }
               }}
               isActive={page === i}
             >

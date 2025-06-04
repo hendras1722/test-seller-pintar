@@ -1,11 +1,10 @@
-import { Input } from '@/components/ui/input'
 import { Fragment, Suspense, use } from 'react'
 import List from './List'
 import { getArticle } from '@/api/article'
-import ArrayMap from '@/components/ArrayMap'
 import { getCategory } from '@/api/category'
 import ListCategory from './ListCategory'
 import InputSearch from './InputSearch'
+import Loading from '@/components/server/loading'
 
 export default function Landing() {
   const data = use(getArticle())
@@ -28,7 +27,7 @@ export default function Landing() {
       <hr className="w-full" />
       <h1 className="grid place-items-center mt-10">Article</h1>
 
-      <Suspense fallback={<div>Loading article...</div>}>
+      <Suspense fallback={<Loading />}>
         <List data={data} />
       </Suspense>
     </Fragment>

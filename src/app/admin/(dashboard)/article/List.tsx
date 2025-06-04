@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, Suspense, useEffect, useState } from 'react'
 import BreadcrumbClient from '@/components/client/Breadcumb'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
@@ -40,6 +40,7 @@ import {
 import ArrayMap from '@/components/ArrayMap'
 import RichTextEditor from '@/components/client/tiptap'
 import { format, subDays } from 'date-fns'
+import LoadingPages from '@/components/server/LoadingPages'
 
 export default function List({
   article,
@@ -51,7 +52,12 @@ export default function List({
     from: new Date(formattedYesterday),
     to: new Date(),
   })
-  const [data, setData] = React.useState(article)
+  const [data, setData] = React.useState<ResutGetArticles>({
+    data: [],
+    total: 0,
+    page: 1,
+    limit: 10,
+  })
   const [params, setParams] = React.useState({ page: 1, limit: 10, title: '' })
   const [open, setOpen] = React.useState(false)
   const [edit, setEdit] = React.useState({
@@ -59,12 +65,19 @@ export default function List({
     data: {} as ListArticles,
   })
   const [categoryItem, setCategoryItem] = React.useState<ResultGetCategory>()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (!open) {
       form.reset()
     }
   }, [open])
+
+  useEffect(() => {
+    if (date.from && date.to) {
+      setParams({ ...params, page: 1 })
+    }
+  }, [date])
 
   const handleUploadImage = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -171,15 +184,26 @@ export default function List({
   }, [open])
 
   function getListArticle(e?: number) {
+    setIsLoading(true)
     getArticle({
       ...params,
       page: e ?? params.page,
       createdAtStart: format(date.from, 'yyyy-MM-dd'),
       createdAtEnd: format(date.to, 'yyyy-MM-dd'),
-    }).then((res) => {
-      setData(res)
     })
+      .then((res) => {
+        setData(res)
+      })
+      .finally(() => setIsLoading(false))
   }
+
+  useEffect(() => {
+    if (!data.data.length) {
+      setData(article)
+    } else {
+      getListArticle()
+    }
+  }, [params])
 
   const onDelete = async (e) => {
     const { error } = await axios('/articles/' + e, {
@@ -211,11 +235,6 @@ export default function List({
       page: 1,
       title: event.target.value,
     })
-    const res = await getArticle({
-      ...params,
-      title: event.target.value,
-    })
-    setData(res)
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -292,6 +311,9 @@ export default function List({
 
   return (
     <Fragment>
+      <If condition={isLoading}>
+        <LoadingPages />
+      </If>
       <BreadcrumbClient items={listBreadcrumb} />
       <div className="mt-8">
         <div className="sm:flex gap-4 items-center mb-5">
@@ -443,7 +465,6 @@ export default function List({
         <TableComponent fields={fields} items={data.data || []} />
         <div className="mt-5">
           <PaginationComponents
-            model={getListArticle}
             page={params.page}
             setParams={setParams}
             pageSize={params.limit ?? 10}

@@ -38,7 +38,12 @@ const formSchema = z.object({
 export default function List({
   category,
 }: Readonly<{ category: ResultGetCategory }>) {
-  const [data, setData] = React.useState(category)
+  const [data, setData] = React.useState<ResultGetCategory>({
+    data: [],
+    totalData: 0,
+    currentPage: 0,
+    totalPages: 0,
+  })
   const [params, setParams] = React.useState({ page: 1, limit: 10, search: '' })
   const [open, setOpen] = React.useState(false)
   const [edit, setEdit] = React.useState({
@@ -97,6 +102,14 @@ export default function List({
       setData(res)
     })
   }
+
+  useEffect(() => {
+    if (!data.data.length) {
+      setData(category)
+    } else {
+      getListCategory()
+    }
+  }, [params])
 
   const onDelete = async (e) => {
     const { error } = await axios('/categories/' + e, {
@@ -297,7 +310,6 @@ export default function List({
         <TableComponent fields={fields} items={data.data || []} />
         <div className="mt-5">
           <PaginationComponents
-            model={getListCategory}
             page={params.page}
             setParams={setParams}
             pageSize={params.limit ?? 10}

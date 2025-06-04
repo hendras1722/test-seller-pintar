@@ -2,6 +2,7 @@ import List from './List'
 import { Suspense, use } from 'react'
 import { getArticle } from '@/api/article'
 import { format, subDays } from 'date-fns'
+import Loading from '@/components/server/loading'
 
 export default function Category() {
   const yesterday = subDays(new Date(), 1)
@@ -14,7 +15,7 @@ export default function Category() {
     })
   )
   return (
-    <Suspense fallback={<div>Loading article...</div>}>
+    <Suspense fallback={<Loading />}>
       <List article={resultArticle} />
     </Suspense>
   )

@@ -48,7 +48,7 @@ export default function LoginClient() {
         title: 'Success',
         description: 'Berhasil login',
         duration: 3000,
-        className: 'border border-green-500 bg-white text-green-800',
+        className: 'border border-green-500 !bg-white text-green-800',
       })
 
       setAuthToken(data?.token as string)
@@ -63,7 +63,7 @@ export default function LoginClient() {
       title: 'Error',
       description: error?.message,
       duration: 3000,
-      className: 'border border-red-500 bg-transparent text-red-800',
+      className: 'border border-red-500 bg-white text-red-800',
     })
   }
   return (
@@ -96,7 +96,7 @@ export default function LoginClient() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Pasword" {...field} />
+                      <Input placeholder="Pasword" {...field} type="password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

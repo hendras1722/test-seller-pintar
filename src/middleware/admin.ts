@@ -8,7 +8,7 @@ export async function adminMiddleware(request: NextRequest) {
   const token = request.cookies.get('token')
   const { pathname } = new URL(request.url)
   
-  if (token ) {
+  if (token) {
     const getMeResponse = await getMe()
 
     response.cookies.set('me', JSON.stringify(getMeResponse.data), {
@@ -22,6 +22,9 @@ export async function adminMiddleware(request: NextRequest) {
     }
   } else {
     response.cookies.delete('me')
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
   }
 
   return response

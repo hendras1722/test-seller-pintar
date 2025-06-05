@@ -35,3 +35,4 @@ export default async function Landing() {
 }
 
 export const dynamic = 'force-dynamic'
+export const revalidate = false

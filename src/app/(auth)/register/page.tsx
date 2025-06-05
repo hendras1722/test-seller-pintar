@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { useAxios } from '@/composable/useAxios'
 import { notify } from '@/utils/Notify'
 import { useRouter } from 'next/navigation'
-import { setAuthToken } from '@/utils/axios'
 
 const formSchema = z.object({
   username: z

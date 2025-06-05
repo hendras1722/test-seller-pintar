@@ -13,8 +13,10 @@ export async function adminMiddleware(request: NextRequest) {
 
     response.cookies.set('me', JSON.stringify(getMeResponse.data), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
       path: '/admin', 
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'strict',
+      secure: true
     })
     
     if (pathname.startsWith('/login')){

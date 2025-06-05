@@ -52,11 +52,16 @@ export default function List() {
       title: searchParams.title ?? undefined,
       category: searchParams.category ?? undefined,
     })
-    console.log(result)
     setItem(result)
   }
   useEffect(() => {
     fetchData()
+  }, [])
+  useEffect(() => {
+    console.log(route.searchParams.size)
+    if (route.searchParams.size > 0) {
+      fetchData()
+    }
   }, [route])
 
   return (
@@ -131,7 +136,6 @@ export default function List() {
       </If>
       <div className="mt-5">
         <PaginationComponents
-          model={handlePagination}
           page={params.page}
           setParams={setParams}
           pageSize={params.limit ?? 10}

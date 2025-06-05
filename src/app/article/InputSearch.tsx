@@ -14,10 +14,8 @@ export default function InputSearch() {
 
   const handleSearch = debounce({ delay: 300 }, async (e) => {
     setSearch(e.target.value)
+    fetchData(e.target.value)
   })
-  useEffect(() => {
-    fetchData(search)
-  }, [search])
   async function fetchData(e) {
     const searchParams = new URLSearchParams(route.searchParams)
     if (searchParams.get('page') === null) searchParams.set('page', '')

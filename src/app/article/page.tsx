@@ -18,9 +18,11 @@ import List from './List'
 import { useRouter } from 'next/navigation'
 import { useRoute } from '@/composable/useRoute'
 import InputSearch from './InputSearch'
-// import List from './article/List'
+import Cookies from 'js-cookie'
 
 export default function Landing() {
+  const cookieStore = Cookies.get('me')
+  const getMe = cookieStore
   const [categories, setCategories] = useState<ResultGetCategory>({
     data: [],
     totalData: 0,
@@ -42,14 +44,14 @@ export default function Landing() {
   useEffect(() => {
     const searchParams = new URLSearchParams(route.searchParams)
 
-    if (searchParams.get('page') === null) searchParams.set('page', '')
-    if (searchParams.get('title') === null) searchParams.set('title', '')
-    if (searchParams.get('category') === null) searchParams.set('category', '')
-    searchParams.set('category', selected)
+    if (selected) {
+      searchParams.set('category', selected)
+    } else {
+      searchParams.delete('category')
+    }
     const newUrl = `${window.location.pathname}?${searchParams.toString()}`
     router.push(newUrl)
   }, [selected])
-  // const data = await getArticle()
   return (
     <Fragment>
       <header className="p-3   bg-[linear-gradient(rgba(37,99,235,0.86),rgba(37,99,235,0.86)),url('/background.jpg')] bg-cover bg-center  px-[60px] py-[36px] ">
@@ -115,7 +117,18 @@ export default function Landing() {
               </clipPath>
             </defs>
           </svg>
-          <div className="text-white text-[16px]">James Dian</div>
+          <div className="flex justify-center items-center gap-2">
+            <div className="rounded-full bg-blue-200 min-w-[32px] min-h-[32px] flex justify-center items-center">
+              {JSON.parse(getMe)
+                .username.split(' ')
+                .map((item) => item.slice(0, 1).toUpperCase())
+                .slice(0, 2)
+                .join('')}
+            </div>
+            <div className="text-white text-[16px] underline">
+              {JSON.parse(getMe).username}
+            </div>
+          </div>
         </div>
         <div className="flex justify-center mt-[42.5px]">
           <div className="text-white mt-[42.5px] text-center min-h-[176px] w-[730px]">
@@ -168,7 +181,7 @@ export default function Landing() {
       <Suspense>
         <List />
       </Suspense>
-      <footer className="bg-[linear-gradient(rgba(37,99,235,0.86),rgba(37,99,235,0.86))] w-full flex md:flex-row flex-col justify-center gap-3  md:px-[506px] px-[62.5px] py-[37px] mt-[100px]">
+      <footer className="bg-[linear-gradient(rgba(37,99,235,0.86),rgba(37,99,235,0.86))] w-full flex md:flex-row flex-col justify-center gap-3   md:px-[506px] px-[62.5px] py-[37px] mt-[100px]">
         <div className="grid place-items-center md:block">
           <svg
             width="134"
@@ -232,7 +245,7 @@ export default function Landing() {
             </defs>
           </svg>
         </div>
-        <small className="text-[16px] text-white">
+        <small className="text-[16px] text-white text-nowrap">
           © 2025 Blog genzet. All rights reserved.
         </small>
       </footer>

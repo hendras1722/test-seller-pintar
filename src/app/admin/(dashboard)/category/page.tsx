@@ -12,7 +12,3 @@ export default function Category() {
     </Suspense>
   )
 }
-
-export const dynamic = 'force-dynamic'
-
-export const experimental_ppr = true

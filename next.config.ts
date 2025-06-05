@@ -49,6 +49,10 @@ const nextConfig: NextConfig = {
           key: 'Permissions-Policy',
           value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
         },
+        {
+          key: 'Cache-Control',
+          value: 'no-store',
+        },
       ],
     },
   ],

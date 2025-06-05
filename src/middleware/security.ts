@@ -45,26 +45,26 @@ function setSecurityHeaders(response: NextResponse, config: SecurityConfig) {
 export async function securityMiddleware(request: NextRequest) {
   const config = defaultConfig
   const response = NextResponse.next()
-  const url = new URL(request.url)
+  // const url = new URL(request.url)
 
   // Add response headers to prevent caching
-  response.headers.set('Cache-Control', 'no-store, max-age=0')
-  response.headers.set('Pragma', 'no-cache')
-  response.headers.set('Expires', '-1')
+  // response.headers.set('Cache-Control', 'no-store, max-age=0')
+  // response.headers.set('Pragma', 'no-cache')
+  // response.headers.set('Expires', '-1')
 
   // Host validation
-  if (config.allowedHosts?.length) {
-    const host = request.headers.get('host')
-    if (host && !config.allowedHosts.includes(host)) {
-      return new NextResponse('Invalid Host header', { status: 400 })
-    }
-  }
+  // if (config.allowedHosts?.length) {
+  //   const host = request.headers.get('host')
+  //   if (host && !config.allowedHosts.includes(host)) {
+  //     return new NextResponse('Invalid Host header', { status: 400 })
+  //   }
+  // }
 
   // Force SSL in production
-  if (config.ssl && url.protocol === 'http:') {
-    url.protocol = 'https:'
-    return NextResponse.redirect(url)
-  }
+  // if (config.ssl && url.protocol === 'http:') {
+  //   url.protocol = 'https:'
+  //   return NextResponse.redirect(url)
+  // }
 
 
   // Apply security headers

@@ -193,7 +193,8 @@ export const clearAuthToken = () => {
   if (typeof window !== 'undefined') {
     Cookies.remove('token')
     fetch('/api/logout', {
-      method: 'POST', // Atau metode HTTP yang Anda gunakan
+      method: 'POST',
+      cache: 'force-cache',
     })
   }
 }

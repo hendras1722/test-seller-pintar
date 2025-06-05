@@ -31,8 +31,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/',
-        destination: '/',
-        permanent: false,
+        destination: '/article',
+        permanent: true,
       },
     ]
   },

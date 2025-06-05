@@ -1,9 +1,7 @@
 'use client'
 
 import List from './List'
-import { Suspense, use } from 'react'
-import { getArticle } from '@/api/article'
-import { format, subDays } from 'date-fns'
+import { Suspense } from 'react'
 import Loading from '@/components/server/loading'
 
 export default function Category() {

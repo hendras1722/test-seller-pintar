@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState, useRef, useEffect } from 'react'
-import { useEditor, EditorContent, Editor } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Heading, { Level } from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
@@ -11,14 +13,14 @@ import Image from '@tiptap/extension-image'
 import {
   Bold,
   Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Subscript as SubscriptIcon,
-  Superscript as SuperscriptIcon,
-  Highlighter,
-  List,
-  ListOrdered,
-  Quote,
+  // Underline as UnderlineIcon,
+  // Strikethrough,
+  // Subscript as SubscriptIcon,
+  // Superscript as SuperscriptIcon,
+  // Highlighter,
+  // List,
+  // ListOrdered,
+  // Quote,
   Image as ImageIcon,
   Undo,
   Redo,
@@ -27,6 +29,7 @@ import {
   AlignRight,
   AlignJustify,
   ChevronDown,
+  // TextIcon,
 } from 'lucide-react'
 
 // Type definitions
@@ -85,7 +88,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        className="flex items-center gap-2 px-3 py-1.5 text-white bg-gray-700 rounded hover:bg-gray-600 text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 text-white bg-white rounded hover:bg-white-600 text-sm"
         onClick={() => setIsOpen(!isOpen)}
       >
         {renderSelected ? renderSelected(value) : selectedItem?.text}
@@ -93,7 +96,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-gray-700 border border-gray-600 rounded shadow-lg z-10 min-w-[120px]">
+        <div className="absolute top-full left-0 mt-1 bg-white border border-white rounded shadow-lg z-10 min-w-[120px]">
           {items.map((item) => (
             <button
               key={item.value}
@@ -313,29 +316,27 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-gray-300 rounded-t-lg px-3 py-2 flex gap-4 items-center flex-wrap">
-        <Dropdown
-          value={textLevelSelected}
-          items={textLevel}
-          onChange={handleChooseHead}
-        />
+    <div className="w-full  mx-auto">
+      <div className="bg-white border border-slate-200 rounded-t-lg px-3 py-2 flex gap-4 items-center flex-wrap">
+        <button
+          type="button"
+          className="editor-btn"
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().undo()}
+          title="Undo"
+        >
+          <Undo className="w-4 h-4" />
+        </button>
 
-        {/* Text Alignment Dropdown */}
-        <Dropdown
-          value={textAlign}
-          items={textAlignment}
-          onChange={handleChooseAlignment}
-          orientation="horizontal"
-          renderSelected={(value) => {
-            const Icon = iconAlignment[value as string]
-            return Icon ? <Icon className="w-4 h-4" /> : null
-          }}
-          renderItem={(item) => {
-            const Icon = iconAlignment[item.value as string]
-            return Icon ? <Icon className="w-4 h-4" /> : null
-          }}
-        />
+        <button
+          type="button"
+          className="editor-btn"
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().redo()}
+          title="Redo"
+        >
+          <Redo className="w-4 h-4" />
+        </button>
 
         {/* Formatting Buttons */}
         <button
@@ -358,94 +359,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Italic className="w-4 h-4" />
         </button>
 
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('subscript') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
-          title="Subscript"
-        >
-          <SubscriptIcon className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('superscript') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
-          title="Superscript"
-        >
-          <SuperscriptIcon className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('strike') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
-        >
-          <Strikethrough className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('underline') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          title="Underline"
-        >
-          <UnderlineIcon className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('highlight') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleHighlight().run()}
-          title="Highlight"
-        >
-          <Highlighter className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('bulletList') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet List"
-        >
-          <List className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('orderedList') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered List"
-        >
-          <ListOrdered className="w-4 h-4" />
-        </button>
-
-        <button
-          type="button"
-          className={`editor-btn ${
-            editor.isActive('blockquote') ? 'is-active' : ''
-          }`}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title="Blockquote"
-        >
-          <Quote className="w-4 h-4" />
-        </button>
-
+        <input
+          ref={inputImageRef}
+          type="file"
+          accept=".jpg,.jpeg,.png"
+          className="hidden"
+          onChange={handleChangeImage}
+        />
         <button
           type="button"
           className="editor-btn"
@@ -455,37 +375,165 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <ImageIcon className="w-4 h-4" />
         </button>
 
-        <input
-          ref={inputImageRef}
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          className="hidden"
-          onChange={handleChangeImage}
-        />
-
+        {/* Text Alignment Button */}
         <button
           type="button"
-          className="editor-btn"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          title="Undo"
+          className={`editor-btn ${editor.isActive('text') ? 'is-active' : ''}`}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .setTextAlign('left' as string)
+              .run()
+          }
+          title="Text"
         >
-          <Undo className="w-4 h-4" />
+          <AlignLeft className="w-4 h-4" />
         </button>
 
         <button
           type="button"
-          className="editor-btn"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          title="Redo"
+          className={`editor-btn ${editor.isActive('text') ? 'is-active' : ''}`}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .setTextAlign('center' as string)
+              .run()
+          }
+          title="Text"
         >
-          <Redo className="w-4 h-4" />
+          <AlignCenter className="w-4 h-4" />
         </button>
+
+        <button
+          type="button"
+          className={`editor-btn ${editor.isActive('text') ? 'is-active' : ''}`}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .setTextAlign('right' as string)
+              .run()
+          }
+          title="Text"
+        >
+          <AlignRight className="w-4 h-4" />
+        </button>
+
+        {/* <Dropdown
+          value={textLevelSelected}
+          items={textLevel}
+          onChange={handleChooseHead}
+        /> */}
+
+        {/* Text Alignment Dropdown */}
+        {/* <Dropdown
+          value={textAlign}
+          items={textAlignment}
+          onChange={handleChooseAlignment}
+          orientation="horizontal"
+          renderSelected={(value) => {
+            const Icon = iconAlignment[value as string]
+            return Icon ? <Icon className="w-4 h-4" /> : null
+          }}
+          renderItem={(item) => {
+            const Icon = iconAlignment[item.value as string]
+            return Icon ? <Icon className="w-4 h-4" /> : null
+          }}
+        /> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('subscript') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          title="Subscript"
+        >
+          <SubscriptIcon className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('superscript') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          title="Superscript"
+        >
+          <SuperscriptIcon className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('strike') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          title="Strikethrough"
+        >
+          <Strikethrough className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('underline') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          title="Underline"
+        >
+          <UnderlineIcon className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('highlight') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          title="Highlight"
+        >
+          <Highlighter className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('bulletList') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          title="Bullet List"
+        >
+          <List className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('orderedList') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          title="Numbered List"
+        >
+          <ListOrdered className="w-4 h-4" />
+        </button> */}
+
+        {/* <button
+          type="button"
+          className={`editor-btn ${
+            editor.isActive('blockquote') ? 'is-active' : ''
+          }`}
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          title="Blockquote"
+        >
+          <Quote className="w-4 h-4" />
+        </button> */}
       </div>
 
       {/* Editor Content */}
-      <div className="border-4 border-gray-300 rounded-b-lg p-2 bg-white min-h-[400px]">
+      <div className="border border-t-none border-slate-200 rounded-b-lg p-2 bg-white min-h-[400px]">
         <EditorContent editor={editor} />
       </div>
 

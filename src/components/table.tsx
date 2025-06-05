@@ -41,7 +41,7 @@ export function TableComponent<T extends Record<string, any>>({
 }: Readonly<TableComponentProps<T>>) {
   return (
     <Table>
-      <TableHeader>
+      <TableHeader className="!bg-gray-100">
         <TableRow className={cn(classRow)}>
           <ArrayMap
             of={fields}

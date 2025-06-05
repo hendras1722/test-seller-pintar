@@ -1,18 +1,6 @@
 'use client'
 
 import Body from '@/components/client/Body'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
 import { FolderGit2, LogOut, Newspaper, Tag } from 'lucide-react'
 import ArrayMap from '@/components/ArrayMap'
 import Profile from './Profile'

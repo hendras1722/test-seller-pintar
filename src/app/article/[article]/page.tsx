@@ -51,7 +51,7 @@ export default function DetailArticle() {
       </div>
       <p
         className="mt-5 text-[16px]"
-        dangerouslySetInnerHTML={{ __html: data?.content }}
+        dangerouslySetInnerHTML={{ __html: data?.content ?? '' }}
       ></p>
       <div className="p-1 border border-gray-300 w-fit rounded-lg text-[12px] mt-5">
         {data?.category.name}

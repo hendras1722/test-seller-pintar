@@ -33,3 +33,5 @@ export default function Landing() {
     </Fragment>
   )
 }
+
+export const dynamic = 'force-dynamic'

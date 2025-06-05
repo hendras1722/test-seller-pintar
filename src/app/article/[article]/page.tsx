@@ -46,3 +46,5 @@ export default function DetailArticle({ params }) {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

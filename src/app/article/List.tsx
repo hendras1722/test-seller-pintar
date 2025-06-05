@@ -224,3 +224,5 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
     </Fragment>
   )
 }
+
+export const dynamic = 'force-dynamic'

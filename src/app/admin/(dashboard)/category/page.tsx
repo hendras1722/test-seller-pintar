@@ -11,3 +11,5 @@ export default function Category() {
     </Suspense>
   )
 }
+
+export const dynamic = 'force-dynamic'

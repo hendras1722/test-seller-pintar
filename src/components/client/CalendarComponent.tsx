@@ -3,15 +3,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const cn = (...classes) => classes.filter(Boolean).join(' ')
 
-// Utility functions untuk menangani tanggal dengan benar
 const getTodayInLocalTimezone = () => {
   const now = new Date()
-  // Buat tanggal baru dengan komponen tahun, bulan, tanggal saja (tanpa waktu)
   return new Date(now.getFullYear(), now.getMonth(), now.getDate())
 }
 
 const createDateAtMidnight = (year, month, date) => {
-  // Selalu buat tanggal pada midnight lokal untuk konsistensi
   return new Date(year, month, date)
 }
 
@@ -26,7 +23,6 @@ export default function Calendar({
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [debugInfo, setDebugInfo] = useState({})
 
-  // Debug informasi tanggal
   useEffect(() => {
     const now = new Date()
     const todayLocal = getTodayInLocalTimezone()
@@ -58,7 +54,14 @@ export default function Calendar({
 
   const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
-  const getDaysInMonth = (date) => {
+  type CalendarDay = {
+    date: number
+    isCurrentMonth: boolean
+    isToday: boolean
+    fullDate: Date
+  }
+
+  const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear()
     const month = date.getMonth()
     const firstDay = new Date(year, month, 1)
@@ -66,7 +69,7 @@ export default function Calendar({
     const daysInMonth = lastDay.getDate()
     const startingDayOfWeek = firstDay.getDay()
 
-    const days = []
+    const days: CalendarDay[] = []
     const today = getTodayInLocalTimezone()
 
     // Previous month days

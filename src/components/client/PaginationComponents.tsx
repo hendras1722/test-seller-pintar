@@ -111,7 +111,9 @@ export default function PaginationComponents({
           <PaginationLink
             onClick={() => {
               setParams({ page: 1 })
-              model(1)
+              if (model) {
+                model(1)
+              }
             }}
             isActive={page === 1}
           >
@@ -137,7 +139,9 @@ export default function PaginationComponents({
             <PaginationLink
               onClick={() => {
                 setParams({ page: i })
-                model(i)
+                if (model) {
+                  model(i)
+                }
               }}
               isActive={page === i}
             >
@@ -160,7 +164,9 @@ export default function PaginationComponents({
           <PaginationLink
             onClick={() => {
               setParams({ page: totalPageCount })
-              model(totalPageCount)
+              if (model) {
+                model(totalPageCount)
+              }
             }}
             isActive={page === totalPageCount}
           >
@@ -191,7 +197,9 @@ export default function PaginationComponents({
               <PaginationPrevious
                 onClick={() => {
                   setParams({ page: Math.max(page - 1, 1) })
-                  model(Math.max(page - 1, 1))
+                  if (model) {
+                    model(Math.max(page - 1, 1))
+                  }
                 }}
                 aria-disabled={page === 1}
                 tabIndex={page === 1 ? -1 : undefined}
@@ -207,7 +215,9 @@ export default function PaginationComponents({
               <PaginationNext
                 onClick={() => {
                   setParams({ page: Math.min(page + 1, totalPageCount) })
-                  model(Math.min(page + 1, totalPageCount))
+                  if (model) {
+                    model(Math.min(page + 1, totalPageCount))
+                  }
                 }}
                 aria-disabled={page === totalPageCount}
                 tabIndex={page === totalPageCount ? -1 : undefined}

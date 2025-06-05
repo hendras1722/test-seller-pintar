@@ -18,13 +18,14 @@ import ArrayMap from '@/components/ArrayMap'
 import Profile from './Profile'
 import Cookies from 'js-cookie'
 
-export default async function RootLayoutAdmin({
+export default function RootLayoutAdmin({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const cookieStore = Cookies.get('token')
+  const cookieStore = Cookies.get('me')
   const getMe = cookieStore
+
   const menu = [
     {
       id: '0',

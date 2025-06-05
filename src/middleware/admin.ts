@@ -10,7 +10,7 @@ export async function adminMiddleware(request: NextRequest) {
   
   if (token) {
     const getMeResponse = await getMe()
-
+console.log(getMeResponse)
     response.cookies.set('me', JSON.stringify(getMeResponse.data), {
       path: '/admin', 
       maxAge: 60 * 60 * 24 * 7,
@@ -22,7 +22,7 @@ export async function adminMiddleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/category', request.url))
     }
   } else {
-    // response.cookies.delete('me')
+    response.cookies.delete('me')
     if (pathname.startsWith('/admin')) {
       return NextResponse.redirect(new URL('/login', request.url))
     }

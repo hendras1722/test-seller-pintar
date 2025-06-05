@@ -1,3 +1,5 @@
+'use client'
+
 import { getCategory } from '@/api/category'
 import List from './List'
 import { Suspense, use } from 'react'

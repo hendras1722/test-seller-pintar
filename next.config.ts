@@ -31,8 +31,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/',
-        destination: '/admin/category',
-        permanent: true,
+        destination: '/',
+        permanent: false,
       },
     ]
   },

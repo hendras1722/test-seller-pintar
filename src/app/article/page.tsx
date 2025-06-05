@@ -6,9 +6,9 @@ import ListCategory from './ListCategory'
 import InputSearch from './InputSearch'
 import Loading from '@/components/server/loading'
 
-export default function Landing() {
-  const data = use(getArticle())
-  const categories = use(getCategory())
+export default async function Landing() {
+  const data = await getArticle()
+  const categories = await getCategory()
 
   return (
     <Fragment>

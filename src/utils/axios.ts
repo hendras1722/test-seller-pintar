@@ -87,7 +87,6 @@ const getToken = async (): Promise<string | undefined> => {
       const { cookies } = await import('next/headers')
       const cookieStore = await cookies()
       const token = cookieStore.get('token')?.value
-      console.log('Server token:', token ? 'exists' : 'not found')
       return token
     } else {
       // Client-side
@@ -181,9 +180,11 @@ export const axiosFetch = {
 export const setAuthToken = (token: string) => {
   if (typeof window !== 'undefined') {
     Cookies.set('token', token, {
-      expires: 7, // 7 days
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      httpOnly: true,
+      path: '/admin',
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'strict',
+      secure: true,
     })
   }
 }

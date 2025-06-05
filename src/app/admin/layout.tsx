@@ -30,7 +30,6 @@ export default async function RootLayoutAdmin({
 }>) {
   const cookieStore = await cookies()
   const getMe = cookieStore.get('me')?.value
-  console.log(getMe)
   const menu = [
     {
       id: '0',

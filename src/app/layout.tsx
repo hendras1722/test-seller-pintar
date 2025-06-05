@@ -25,3 +25,4 @@ export default function RootLayoutAdmin({
     </html>
   )
 }
+export const revalidate = false

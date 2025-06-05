@@ -92,3 +92,4 @@ export default async function RootLayoutAdmin({
     </Body>
   )
 }
+export const revalidate = false

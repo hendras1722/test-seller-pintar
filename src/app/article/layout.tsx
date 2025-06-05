@@ -17,3 +17,4 @@ export default function RootLayoutAdmin({
     </Body>
   )
 }
+export const revalidate = false

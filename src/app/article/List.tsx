@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation'
 import { Fragment, useEffect, useState } from 'react'
 
 export default function List({ data }: { readonly data: ResutGetArticles }) {
-  console.log(data, 'inidata')
   const breakpoints = {
     xs: 0,
     sm: 640,
@@ -169,7 +168,7 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
         <Else key={'artcile'}>
           <div className="rounded mt-8 px-4">
             <ArrayMap
-              of={data.data}
+              of={item.data}
               render={(item, index) => (
                 <Link
                   href={`/article/${item.id}?category=${item.category.name}`}

@@ -4,44 +4,35 @@ import { Input } from '@/components/ui/input'
 import { useRoute } from '@/composable/useRoute'
 import { useRouter } from 'next/navigation'
 import { title } from 'process'
-import { debounce } from 'radash'
-import React from 'react'
+import { debounce, select } from 'radash'
+import React, { useEffect } from 'react'
 
 export default function InputSearch() {
   const router = useRouter()
   const route = useRoute()
   const [search, setSearch] = React.useState('')
 
-  const handleSearch = debounce({ delay: 200 }, async (e) => {
+  const handleSearch = debounce({ delay: 300 }, async (e) => {
     setSearch(e.target.value)
   })
+  useEffect(() => {
+    fetchData(search)
+  }, [search])
   async function fetchData(e) {
-    if (e.key !== 'Enter') return
-    if (route.searchParams.get('category') || route.searchParams.get('page')) {
-      let searchParams = {
-        page: route.searchParams.get('page') ?? undefined,
-        title: route.searchParams.get('title') ?? undefined,
-        category: route.searchParams.get('category') ?? undefined,
-      }
-      router.push(
-        '/article?category=' +
-          searchParams.category +
-          '&title=' +
-          search +
-          '&page=1&title=' +
-          title
-      )
-      return
-    }
-    if (!search) return router.push('/article')
-    router.push('/article?title=' + search)
+    const searchParams = new URLSearchParams(route.searchParams)
+    if (searchParams.get('page') === null) searchParams.set('page', '')
+    if (searchParams.get('title') === null) searchParams.set('title', '')
+    if (searchParams.get('category') === null) searchParams.set('category', '')
+
+    searchParams.set('title', e ?? search)
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`
+    router.push(newUrl)
   }
   return (
     <Input
       onChange={handleSearch}
-      onKeyDown={fetchData}
       placeholder={'Search'}
-      className="lg:w-[30%] w-full "
+      className=" bg-white pl-10 w-full"
     />
   )
 }

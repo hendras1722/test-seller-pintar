@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { useAxios } from '@/composable/useAxios'
 import { notify } from '@/utils/Notify'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const formSchema = z.object({
   username: z
@@ -69,45 +70,57 @@ export default function LoginClient() {
   }
   return (
     <div className="min-h-screen w-full flex items-center justify-center ">
-      <div className="w-[400px] h-fit  border border-gray-100 rounded-2xl flex flex-col items-center dark:shadow-lg dark:shadow-white">
-        <div className=" mt-5 pb-5">
-          <h2>Register Seller Pintar</h2>
+      <div>
+        <div className="w-[400px] h-fit  border border-gray-100 rounded-2xl flex flex-col items-center dark:shadow-lg dark:shadow-white">
+          <div className=" mt-5 pb-5">
+            <h2>Register Seller Pintar</h2>
+          </div>
+          <div className="flex-1 w-full px-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="my-3"></div>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Pasword"
+                          {...field}
+                          type="password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button color="green" type="submit" className="my-8 w-full ">
+                  Submit
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
-        <div className="flex-1 w-full px-8">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="my-3"></div>
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Pasword" {...field} type="password" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button color="green" type="submit" className="my-8 w-full ">
-                Submit
-              </Button>
-            </form>
-          </Form>
+        <div className="text-center mt-2 font-semibold text-[12px]">
+          Sudah punya akun ?
+          <Link href="/login" className="ml-2 text-blue-500">
+            Login disini
+          </Link>
         </div>
       </div>
     </div>

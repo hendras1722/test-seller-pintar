@@ -30,10 +30,14 @@ export default function Landing() {
       <header className="p-3">
         <div className="w-full  flex justify-center">
           <div className="grid place-items-center">
-            <InputSearch />
+            <Suspense>
+              <InputSearch />
+            </Suspense>
             <div className="w-full overflow-auto ">
               <ul className="flex gap-3 mt-5 w-full">
-                <ListCategory category={categories.data} />
+                <Suspense>
+                  <ListCategory category={categories.data} />
+                </Suspense>
               </ul>
             </div>
           </div>
@@ -42,7 +46,9 @@ export default function Landing() {
       <hr className="w-full" />
       <h1 className="grid place-items-center mt-10">Article</h1>
 
-      <List data={{ data: [], limit: 0, page: 0, total: 0 }} />
+      <Suspense>
+        <List data={{ data: [], limit: 0, page: 0, total: 0 }} />
+      </Suspense>
     </Fragment>
   )
 }

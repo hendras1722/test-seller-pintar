@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, Suspense, useEffect, useState } from 'react'
 import { getArticle } from '@/api/article'
 import { getCategory } from '@/api/category'
 import { ResutGetArticles } from '@/type/article'
@@ -10,12 +10,6 @@ import ListCategory from './article/ListCategory'
 import List from './article/List'
 
 export default function Landing() {
-  const [data, setData] = useState<ResutGetArticles>({
-    data: [],
-    limit: 0,
-    page: 0,
-    total: 0,
-  })
   const [categories, setCategories] = useState<ResultGetCategory>({
     data: [],
     totalData: 0,
@@ -23,15 +17,10 @@ export default function Landing() {
     totalPages: 0,
   })
   useEffect(() => {
-    async function getData() {
-      const data = await getArticle()
-      setData(data)
-    }
     async function getCategoryList() {
       const categories = await getCategory()
       setCategories(categories)
     }
-    getData()
     getCategoryList()
   }, [])
   // const data = await getArticle()
@@ -40,10 +29,14 @@ export default function Landing() {
       <header className="p-3">
         <div className="w-full  flex justify-center">
           <div className="grid place-items-center">
-            <InputSearch />
+            <Suspense>
+              <InputSearch />
+            </Suspense>
             <div className="w-full overflow-auto ">
               <ul className="flex gap-3 mt-5 w-full">
-                <ListCategory category={categories.data} />
+                <Suspense>
+                  <ListCategory category={categories.data} />
+                </Suspense>
               </ul>
             </div>
           </div>
@@ -52,7 +45,9 @@ export default function Landing() {
       <hr className="w-full" />
       <h1 className="grid place-items-center mt-10">Article</h1>
 
-      <List data={{ data: [], limit: 10, page: 1, total: 0 }} />
+      <Suspense>
+        <List data={{ data: [], limit: 10, page: 1, total: 0 }} />
+      </Suspense>
     </Fragment>
   )
 }

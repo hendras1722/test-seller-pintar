@@ -1,7 +1,7 @@
 'use client'
 import { getArticle, getArticleDetail } from '@/api/article'
 import { format } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import ListArticleOrther from './ListArticleOrther'
 import Link from 'next/link'
 import { ListArticles } from '@/type/article'
@@ -56,7 +56,9 @@ export default function DetailArticle() {
       <div className="p-1 border border-gray-300 w-fit rounded-lg text-[12px] mt-5">
         {data?.category.name}
       </div>
-      <ListArticleOrther articleOrther={article} />
+      <Suspense>
+        <ListArticleOrther articleOrther={article} />
+      </Suspense>
       <div className="mt-10">
         <Link href={'/article'}>Back</Link>
       </div>

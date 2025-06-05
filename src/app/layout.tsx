@@ -25,4 +25,3 @@ export default function RootLayoutAdmin({
     </html>
   )
 }
-export const revalidate = 60 * 10

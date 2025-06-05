@@ -91,4 +91,3 @@ export default async function RootLayoutAdmin({
     </Body>
   )
 }
-export const revalidate = 60 * 10

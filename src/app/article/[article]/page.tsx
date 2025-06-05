@@ -48,5 +48,5 @@ export default function DetailArticle({ params }) {
 }
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 60 * 10
+
 export const experimental_ppr = true

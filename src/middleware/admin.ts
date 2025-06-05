@@ -9,15 +9,15 @@ export async function adminMiddleware(request: NextRequest) {
   const { pathname } = new URL(request.url)
   
   if (token) {
-    // const getMeResponse = await getMe()
+    const getMeResponse = await getMe()
 
-    // response.cookies.set('me', JSON.stringify(getMeResponse.data), {
-    //   httpOnly: true,
-    //   path: '/admin', 
-    //   maxAge: 60 * 60 * 24 * 7,
-    //   sameSite: 'strict',
-    //   secure: true
-    // })
+    response.cookies.set('me', JSON.stringify(getMeResponse.data), {
+      httpOnly: true,
+      path: '/admin', 
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: 'strict',
+      secure: true
+    })
     
     if (pathname.startsWith('/login')){
       return NextResponse.redirect(new URL('/admin/category', request.url))

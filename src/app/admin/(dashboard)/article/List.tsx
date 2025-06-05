@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Fragment, Suspense, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import BreadcrumbClient from '@/components/client/Breadcumb'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
@@ -198,11 +198,7 @@ export default function List({
   }
 
   useEffect(() => {
-    if (!data.data.length) {
-      setData(article)
-    } else {
-      getListArticle()
-    }
+    getListArticle()
   }, [params])
 
   const onDelete = async (e) => {

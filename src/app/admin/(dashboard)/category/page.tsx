@@ -1,8 +1,7 @@
 'use client'
 
-import { getCategory } from '@/api/category'
 import List from './List'
-import { Suspense, use } from 'react'
+import { Suspense } from 'react'
 import Loading from '@/components/server/loading'
 
 export default function Category() {

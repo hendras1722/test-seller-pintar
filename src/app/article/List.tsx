@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { Fragment, useEffect, useState } from 'react'
 
 export default function List({ data }: { readonly data: ResutGetArticles }) {
+  console.log(data, 'inidata')
   const breakpoints = {
     xs: 0,
     sm: 640,
@@ -74,32 +75,20 @@ export default function List({ data }: { readonly data: ResutGetArticles }) {
   }
 
   async function fetchData() {
-    if (
-      route.searchParams.get('category') ||
-      route.searchParams.get('title') ||
-      route.searchParams.get('page')
-    ) {
-      let searchParams = {
-        page: route.searchParams.get('page') ?? undefined,
-        title: route.searchParams.get('title') ?? undefined,
-        category: route.searchParams.get('category') ?? undefined,
-      }
-      const result = await getArticle({
-        page: searchParams.page ?? undefined,
-        title: searchParams.title ?? undefined,
-        category: searchParams.category ?? undefined,
-      })
-      setItem(result)
-    } else {
-      setItem(data)
+    let searchParams = {
+      page: route.searchParams.get('page') ?? undefined,
+      title: route.searchParams.get('title') ?? undefined,
+      category: route.searchParams.get('category') ?? undefined,
     }
+    const result = await getArticle({
+      page: searchParams.page ?? undefined,
+      title: searchParams.title ?? undefined,
+      category: searchParams.category ?? undefined,
+    })
+    setItem(result)
   }
   useEffect(() => {
-    if (!item.data.length) {
-      setItem(data)
-    } else {
-      fetchData()
-    }
+    fetchData()
   }, [router])
   return (
     <Fragment>

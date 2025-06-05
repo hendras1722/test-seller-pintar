@@ -1,15 +1,41 @@
-import { Fragment, Suspense, use } from 'react'
+'use client'
+
+import { Fragment, Suspense, use, useEffect, useState } from 'react'
 import List from './List'
 import { getArticle } from '@/api/article'
 import { getCategory } from '@/api/category'
 import ListCategory from './ListCategory'
 import InputSearch from './InputSearch'
 import Loading from '@/components/server/loading'
+import { ResutGetArticles } from '@/type/article'
+import { ResultGetCategory } from '@/type/category'
 
-export default async function Landing() {
-  const data = await getArticle()
-  const categories = await getCategory()
-
+export default function Landing() {
+  const [data, setData] = useState<ResutGetArticles>({
+    data: [],
+    limit: 0,
+    page: 0,
+    total: 0,
+  })
+  const [categories, setCategories] = useState<ResultGetCategory>({
+    data: [],
+    totalData: 0,
+    currentPage: 0,
+    totalPages: 0,
+  })
+  useEffect(() => {
+    async function getData() {
+      const data = await getArticle()
+      setData(data)
+    }
+    async function getCategoryList() {
+      const categories = await getCategory()
+      setCategories(categories)
+    }
+    getData()
+    getCategoryList()
+  }, [])
+  // const data = await getArticle()
   return (
     <Fragment>
       <header className="p-3">
@@ -27,9 +53,7 @@ export default async function Landing() {
       <hr className="w-full" />
       <h1 className="grid place-items-center mt-10">Article</h1>
 
-      <Suspense fallback={<Loading />}>
-        <List data={data} />
-      </Suspense>
+      <List data={{ data: [], limit: 10, page: 1, total: 0 }} />
     </Fragment>
   )
 }

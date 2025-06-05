@@ -104,11 +104,7 @@ export default function List({
   }
 
   useEffect(() => {
-    if (!data.data.length) {
-      setData(category)
-    } else {
-      getListCategory()
-    }
+    getListCategory()
   }, [params])
 
   const onDelete = async (e) => {

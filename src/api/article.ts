@@ -3,13 +3,13 @@ import { ListArticles, ResutGetArticles } from '@/type/article'
 import { apiEndpoint } from '@/type/endpoint'
 import { axiosFetch } from '@/utils/axios'
 
-export const getArticle = (params?): Promise<ResutGetArticles> => {
-  return axiosFetch.get<ResutGetArticles>(apiEndpoint.GET_ARTICLE, {
+export const getArticle = async (params?): Promise<ResutGetArticles> => {
+  return await axiosFetch.get<ResutGetArticles>(apiEndpoint.GET_ARTICLE, {
     params,
   })
 }
-export const getArticleDetail = (query?): Promise<ListArticles> => {
-  return axiosFetch.get<ListArticles>(apiEndpoint.GET_ARTICLE + '/' + query)
+export const getArticleDetail = async (query?): Promise<ListArticles> => {
+  return await axiosFetch.get<ListArticles>(apiEndpoint.GET_ARTICLE + '/' + query)
 }
 
 

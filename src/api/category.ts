@@ -3,8 +3,8 @@ import {  ResultGetCategory } from '@/type/category'
 import { apiEndpoint } from '@/type/endpoint'
 import { axiosFetch } from '@/utils/axios'
 
-export const getCategory = (params?):Promise<ResultGetCategory> => {
-  return axiosFetch.get<ResultGetCategory>(apiEndpoint.GET_CATEGORY, {
+export const getCategory = async (params?):Promise<ResultGetCategory> => {
+  return await axiosFetch.get<ResultGetCategory>(apiEndpoint.GET_CATEGORY, {
     params,
   })
 }

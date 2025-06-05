@@ -12,10 +12,9 @@ export async function adminMiddleware(request: NextRequest) {
     const getMeResponse = await getMe()
 
     response.cookies.set('me', JSON.stringify(getMeResponse.data), {
-      httpOnly: true,
       path: '/admin', 
       maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'strict',
+      sameSite: 'lax',
       secure: true
     })
     

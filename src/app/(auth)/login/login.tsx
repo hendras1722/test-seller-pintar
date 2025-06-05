@@ -17,9 +17,10 @@ import { useAxios } from '@/composable/useAxios'
 import { notify } from '@/utils/Notify'
 import { useRouter } from 'next/navigation'
 import { setAuthToken } from '@/utils/axios'
+import Link from 'next/link'
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  username: z.string().min(3, {
     message: 'Username must be at least 2 characters.',
   }),
   password: z.string(),
@@ -46,7 +47,7 @@ export default function LoginClient() {
       await notify({
         variant: 'success',
         title: 'Success',
-        description: 'Berhasil login',
+        description: 'Successfully login',
         duration: 3000,
         className: 'border border-green-500 !bg-white text-green-800',
       })
@@ -68,45 +69,57 @@ export default function LoginClient() {
   }
   return (
     <div className="min-h-screen w-full flex items-center justify-center ">
-      <div className="w-[400px] h-fit  border border-gray-100 rounded-2xl flex flex-col items-center dark:shadow-lg dark:shadow-white">
-        <div className=" mt-5 pb-5">
-          <h2>Login Seller Pintar</h2>
+      <div>
+        <div className="w-[400px] h-fit  border border-gray-100 rounded-2xl flex flex-col items-center dark:shadow-lg dark:shadow-white">
+          <div className=" mt-5 pb-5">
+            <h2>Login Seller Pintar</h2>
+          </div>
+          <div className="flex-1 w-full px-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="my-3"></div>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Pasword"
+                          {...field}
+                          type="password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button color="green" type="submit" className="my-8 w-full ">
+                  Submit
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
-        <div className="flex-1 w-full px-8">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="my-3"></div>
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Pasword" {...field} type="password" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button color="green" type="submit" className="my-8 w-full ">
-                Submit
-              </Button>
-            </form>
-          </Form>
+        <div className="text-center mt-2 font-semibold text-[12px]">
+          Belum punya akun ?
+          <Link href="/register" className="ml-2 text-blue-500">
+            Daftar disini
+          </Link>
         </div>
       </div>
     </div>

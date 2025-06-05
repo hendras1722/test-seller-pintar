@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Project: Test Seller
 
-## Getting Started
+Repositori ini adalah project Next.js untuk situs `https://test-seller.syahendra.com`.
 
-First, run the development server:
+## 🚀 Fitur
+- **Artikel**: Baca artikel di [https://test-seller.syahendra.com/article](https://test-seller.syahendra.com/article)
+- **Login & Buat Artikel**: Login untuk membuat artikel di [https://test-seller.syahendra.com/login](https://test-seller.syahendra.com/login)
+
+## 📦 Clone Repository
+
+Untuk memulai, clone repositori dari GitHub:
 
 ```bash
+git clone <repository-url>
+````
+
+> Ganti `<repository-url>` dengan URL repository GitHub Anda.
+
+## 💻 Development
+
+Jalankan server development Next.js:
+
+```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Project akan berjalan di [http://localhost:3000](http://localhost:3000) secara default.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Build & Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Untuk membuat build production:
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Atau jika menggunakan **Next.js built-in server**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📖 Dokumentasi
 
-## Deploy on Vercel
+* **Artikel**: [https://test-seller.syahendra.com/article](https://test-seller.syahendra.com/article)
+* **Login**: [https://test-seller.syahendra.com/login](https://test-seller.syahendra.com/login)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 💡 Catatan
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Pastikan Node.js versi 22.
+
+---

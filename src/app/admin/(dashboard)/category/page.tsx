@@ -2,11 +2,10 @@
 
 import List from './List'
 import { Suspense } from 'react'
-import Loading from '@/components/server/loading'
 
 export default function Category() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense>
       <List
         category={{ data: [], totalData: 0, currentPage: 0, totalPages: 0 }}
       />

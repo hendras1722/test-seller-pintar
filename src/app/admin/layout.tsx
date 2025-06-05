@@ -15,7 +15,6 @@ import {
 import { FolderGit2, Newspaper } from 'lucide-react'
 import ArrayMap from '@/components/ArrayMap'
 import { cookies } from 'next/headers'
-import Link from 'next/link'
 import Profile from './Profile'
 
 export const metadata: Metadata = {

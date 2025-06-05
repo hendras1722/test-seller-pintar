@@ -180,11 +180,9 @@ export const axiosFetch = {
 export const setAuthToken = (token: string) => {
   if (typeof window !== 'undefined') {
     Cookies.set('token', token, {
-      httpOnly: true,
-      path: '/admin',
-      maxAge: 60 * 60 * 24 * 7,
-      sameSite: 'strict',
+      expires: 7,
       secure: true,
+      sameSite: 'sameSite',
     })
   }
 }

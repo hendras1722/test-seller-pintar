@@ -4,10 +4,11 @@ import { Suspense, use } from 'react'
 import Loading from '@/components/server/loading'
 
 export default function Category() {
-  const resultCategory = use(getCategory())
   return (
     <Suspense fallback={<Loading />}>
-      <List category={resultCategory} />
+      <List
+        category={{ data: [], totalData: 0, currentPage: 0, totalPages: 0 }}
+      />
     </Suspense>
   )
 }

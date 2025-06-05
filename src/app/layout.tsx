@@ -1,3 +1,5 @@
+'use client'
+
 import type { Metadata } from 'next'
 import './globals.css'
 // import Body from '@/components/layouts/Body'

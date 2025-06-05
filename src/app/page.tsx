@@ -1,14 +1,13 @@
 'use client'
 
-import { Fragment, Suspense, use, useEffect, useState } from 'react'
-import List from './List'
+import { Fragment, useEffect, useState } from 'react'
 import { getArticle } from '@/api/article'
 import { getCategory } from '@/api/category'
-import ListCategory from './ListCategory'
-import InputSearch from './InputSearch'
-import Loading from '@/components/server/loading'
 import { ResutGetArticles } from '@/type/article'
 import { ResultGetCategory } from '@/type/category'
+import InputSearch from './article/InputSearch'
+import ListCategory from './article/ListCategory'
+import List from './article/List'
 
 export default function Landing() {
   const [data, setData] = useState<ResutGetArticles>({

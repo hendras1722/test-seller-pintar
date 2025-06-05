@@ -11,12 +11,6 @@ import { ResutGetArticles } from '@/type/article'
 import { ResultGetCategory } from '@/type/category'
 
 export default function Landing() {
-  const [data, setData] = useState<ResutGetArticles>({
-    data: [],
-    limit: 0,
-    page: 0,
-    total: 0,
-  })
   const [categories, setCategories] = useState<ResultGetCategory>({
     data: [],
     totalData: 0,
@@ -24,15 +18,10 @@ export default function Landing() {
     totalPages: 0,
   })
   useEffect(() => {
-    async function getData() {
-      const data = await getArticle()
-      setData(data)
-    }
     async function getCategoryList() {
       const categories = await getCategory()
       setCategories(categories)
     }
-    getData()
     getCategoryList()
   }, [])
   // const data = await getArticle()
@@ -53,7 +42,7 @@ export default function Landing() {
       <hr className="w-full" />
       <h1 className="grid place-items-center mt-10">Article</h1>
 
-      <List data={{ data: [], limit: 10, page: 1, total: 0 }} />
+      <List data={{ data: [], limit: 0, page: 0, total: 0 }} />
     </Fragment>
   )
 }

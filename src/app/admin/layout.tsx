@@ -15,16 +15,16 @@ import {
 } from '@/components/ui/sidebar'
 import { FolderGit2, Newspaper } from 'lucide-react'
 import ArrayMap from '@/components/ArrayMap'
-// import { cookies } from 'next/headers'
 import Profile from './Profile'
+import Cookies from 'js-cookie'
 
 export default async function RootLayoutAdmin({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const cookieStore = await cookies()
-  // const getMe = cookieStore.get('me')?.value
+  const cookieStore = Cookies.get('token')
+  const getMe = cookieStore
   const menu = [
     {
       id: '0',
@@ -71,10 +71,10 @@ export default async function RootLayoutAdmin({
             <SidebarTrigger />
             <div className="flex gap-3">
               <div className="block">
-                {/* <p className="text-[16px]">
+                <p className="text-[16px]">
                   {getMe ? JSON.parse(getMe).username : null}
                 </p>
-                <small> {getMe ? JSON.parse(getMe).role : null}</small> */}
+                <small> {getMe ? JSON.parse(getMe).role : null}</small>
               </div>
               <Profile />
             </div>

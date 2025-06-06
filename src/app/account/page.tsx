@@ -2,11 +2,11 @@
 
 import { If } from '@/components/if'
 import Cookies from 'js-cookie'
-import { Fragment } from 'react'
-import Profile from '../admin/Profile'
+import { Fragment, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { IconLogoLight } from '@/components/Icon'
+import Profile from '@/components/client/Profile'
 
 export default function Account() {
   const cookieStore = Cookies.get('me')
@@ -19,11 +19,13 @@ export default function Account() {
           <div className="w-full  flex justify-between">
             <IconLogoLight />
 
-            <Profile>
-              <span className="text-black">
-                {getMe && JSON.parse(getMe).username}
-              </span>{' '}
-            </Profile>
+            <Suspense>
+              <Profile>
+                <span className="text-black">
+                  {getMe && JSON.parse(getMe).username}
+                </span>{' '}
+              </Profile>
+            </Suspense>
           </div>
         </header>
       </div>

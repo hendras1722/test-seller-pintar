@@ -1,10 +1,10 @@
 'use client'
 
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, Suspense, useEffect, useState } from 'react'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, Trash2 } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { ListArticles, ResutGetArticles } from '@/type/article'
 import { debounce } from 'radash'
 import { useAxios } from '@/composable/useAxios'
@@ -28,7 +28,7 @@ import { useRouter } from 'next/navigation'
 import { getArticle } from '@/api/article'
 import AlertModal from '@/components/client/AlertModal'
 
-export default function List() {
+export default function ArticleList() {
   const [data, setData] = React.useState<ResutGetArticles>({
     data: [],
     total: 0,
@@ -201,92 +201,108 @@ export default function List() {
   }
 
   return (
-    <Fragment>
-      <If condition={isLoading}>
-        <LoadingPages />
-      </If>
-      <div className=" px-6 py-[26px]">
-        <h6>Total Article: {data.total}</h6>
-      </div>
-      <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
-        <div className="flex flex-row gap-2">
-          <Select
-            value={params.category}
-            onValueChange={(e) => setParams({ ...params, category: e })}
-          >
-            <SelectTrigger className="md:w-[180px] w-full text-foreground bg-white">
-              <SelectValue
-                placeholder={'Select a category'}
-                className="text-black"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              <If condition={!!(categoryItem && categoryItem.data.length > 0)}>
-                <SelectGroup>
-                  <SelectItem value={'All'}>All</SelectItem>
-                  <ArrayMap
-                    of={
-                      (categoryItem && categoryItem.data.filter((e) => e.id)) ||
-                      []
-                    }
-                    render={(e) => (
-                      <SelectItem key={e.id} value={e.id ?? ''}>
-                        {e.name || 'No categories available'}
-                      </SelectItem>
-                    )}
+    <Suspense fallback={<LoadingPages />}>
+      <Fragment>
+        <If condition={isLoading}>
+          <LoadingPages />
+        </If>
+        <div className=" px-6 py-[26px]">
+          <h6>Total Article: {data.total}</h6>
+        </div>
+        <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
+          <div className="flex flex-row gap-2">
+            <Suspense>
+              <Select
+                value={params.category}
+                onValueChange={(e) => setParams({ ...params, category: e })}
+              >
+                <SelectTrigger className="md:w-[180px] w-full text-foreground bg-white">
+                  <SelectValue
+                    placeholder={'Select a category'}
+                    className="text-black"
                   />
-                </SelectGroup>
-                <Else key={'none'}>
-                  <SelectItem value="none">Select an option</SelectItem>
-                </Else>
-              </If>
-            </SelectContent>
-          </Select>
-          <div className="relative w-full">
-            <Input onChange={onChangeSearch} className="pl-10 w-full" />
-            <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
+                </SelectTrigger>
+                <SelectContent>
+                  <If
+                    condition={!!(categoryItem && categoryItem.data.length > 0)}
+                  >
+                    <SelectGroup>
+                      <SelectItem value={'All'}>All</SelectItem>
+                      <ArrayMap
+                        of={
+                          (categoryItem &&
+                            categoryItem.data.filter((e) => e.id)) ||
+                          []
+                        }
+                        render={(e) => (
+                          <SelectItem key={e.id} value={e.id ?? ''}>
+                            {e.name || 'No categories available'}
+                          </SelectItem>
+                        )}
+                      />
+                    </SelectGroup>
+                    <Else key={'none'}>
+                      <SelectItem value="none">Select an option</SelectItem>
+                    </Else>
+                  </If>
+                </SelectContent>
+              </Select>
+            </Suspense>
+            <div className="relative w-full">
+              <Suspense>
+                <Input onChange={onChangeSearch} className="pl-10 w-full" />
+                <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
+              </Suspense>
+            </div>
+          </div>
+          <Suspense>
+            <Button
+              className="bg-blue-500"
+              onClick={() => router.push('/admin/article/create')}
+            >
+              Add Article
+            </Button>
+          </Suspense>
+        </div>
+        <div>
+          <div className="sm:flex gap-4 items-center"></div>
+          <Suspense>
+            <TableComponent fields={fields} items={data.data || []} />
+          </Suspense>
+          <div className="mt-5">
+            <Suspense>
+              <PaginationComponents
+                page={params.page}
+                setParams={setParams}
+                pageSize={params.limit ?? 10}
+                totalCount={data.total}
+              />
+            </Suspense>
           </div>
         </div>
-        <Button
-          className="bg-blue-500"
-          onClick={() => router.push('/admin/article/create')}
-        >
-          Add Article
-        </Button>
-      </div>
-      <div>
-        <div className="sm:flex gap-4 items-center"></div>
-        <TableComponent fields={fields} items={data.data || []} />
-        <div className="mt-5">
-          <PaginationComponents
-            page={params.page}
-            setParams={setParams}
-            pageSize={params.limit ?? 10}
-            totalCount={data.total}
-          />
-        </div>
-      </div>
-
-      <AlertModal
-        title="Delete Articles"
-        open={openModal.show}
-        onOpenChange={setOpenModal}
-      >
-        <AlertModal.Description>
-          Deleting this article is permanent and cannot be undone. All related
-          content will be removed.
-        </AlertModal.Description>
-        <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
-          Cancel
-        </AlertModal.Cancel>
-        <AlertModal.Action
-          asChild
-          className="bg-red-500 hover:bg-red-500"
-          onClick={onDelete}
-        >
-          Delete
-        </AlertModal.Action>
-      </AlertModal>
-    </Fragment>
+        <Suspense>
+          <AlertModal
+            title="Delete Articles"
+            open={openModal.show}
+            onOpenChange={setOpenModal}
+          >
+            <AlertModal.Description>
+              Deleting this article is permanent and cannot be undone. All
+              related content will be removed.
+            </AlertModal.Description>
+            <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+              Cancel
+            </AlertModal.Cancel>
+            <AlertModal.Action
+              asChild
+              className="bg-red-500 hover:bg-red-500"
+              onClick={onDelete}
+            >
+              Delete
+            </AlertModal.Action>
+          </AlertModal>
+        </Suspense>
+      </Fragment>
+    </Suspense>
   )
 }

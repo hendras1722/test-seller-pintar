@@ -38,7 +38,7 @@ import { useRouter } from 'next/navigation'
 import { getArticleDetail } from '@/api/article'
 import { useRoute } from '@/composable/useRoute'
 
-export default function ArticleCreate() {
+export default function ArticleEdit() {
   const [categoryItem, setCategoryItem] = React.useState<ResultGetCategory>()
   const [readyUpload, setReadyUpload] = React.useState(true)
   const getMe = Cookies.get('me')

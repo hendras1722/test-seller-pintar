@@ -14,12 +14,12 @@ import {
 } from '@/components/ui/select'
 import { Else, If } from '@/components/if'
 import { Search } from 'lucide-react'
-import List from './List'
 import { useRouter } from 'next/navigation'
 import { useRoute } from '@/composable/useRoute'
-import InputSearch from './InputSearch'
-import Profile from '../admin/Profile'
 import { IconLogoWhite } from '@/components/Icon'
+import List from './List'
+import InputSearch from './InputSearch'
+import Profile from '@/components/client/Profile'
 
 export default function Landing() {
   const [categories, setCategories] = useState<ResultGetCategory>({
@@ -58,7 +58,9 @@ export default function Landing() {
           <button onClick={() => router.push('/article')}>
             <IconLogoWhite />
           </button>
-          <Profile />
+          <Suspense>
+            <Profile />
+          </Suspense>
         </div>
         <div className="flex justify-center mt-[42.5px]">
           <div className="text-white mt-[42.5px] text-center min-h-[176px] w-[730px]">
@@ -183,4 +185,4 @@ export default function Landing() {
   )
 }
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'

@@ -146,4 +146,4 @@ export default function List() {
   )
 }
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'

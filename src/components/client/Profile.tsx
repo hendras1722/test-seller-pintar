@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Suspense } from 'react'
 
 export default function Profile({
   children,
@@ -42,14 +43,16 @@ export default function Profile({
                 .join('')}
           </If>
         </div>
-        <div
-          className={cn(
-            'text-black text-[16px] underline',
-            !route.pathname.startsWith('/admin') && 'text-white'
-          )}
-        >
-          {getMe && JSON.parse(getMe).username}
-        </div>
+        <Suspense>
+          <div
+            className={cn(
+              'text-black text-[16px] underline',
+              !route.pathname.startsWith('/admin') && 'text-white'
+            )}
+          >
+            {getMe && JSON.parse(getMe).username}
+          </div>
+        </Suspense>
       </button>
       <Else key={'user'}>
         <DropdownMenu>

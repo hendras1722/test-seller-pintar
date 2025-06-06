@@ -164,6 +164,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   const editor = useEditor({
+    immediatelyRender: false,
     content: value,
     extensions: [
       StarterKit.configure({

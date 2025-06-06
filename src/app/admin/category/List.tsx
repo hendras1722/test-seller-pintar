@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, Suspense, useEffect, useCallback } from 'react'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -21,7 +21,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  // FormMessage,
 } from '@/components/ui/form'
 import { twMerge } from 'tailwind-merge'
 import { If } from '@/components/if'
@@ -36,7 +35,7 @@ const formSchema = z.object({
   }),
 })
 
-export default function List() {
+export default function CategoryList() {
   const [data, setData] = React.useState<ResultGetCategory>({
     data: [],
     totalData: 0,
@@ -142,38 +141,31 @@ export default function List() {
     })
   }
 
-  const onChangeSearch = debounce({ delay: 500 }, async (event) => {
-    setParams(() => {
-      return {
-        limit: 10,
+  const onChangeSearch = useCallback(
+    debounce({ delay: 500 }, async (event) => {
+      const searchValue = event.target.value
+      setParams((prevParams) => ({
+        ...prevParams,
         page: 1,
-        search: event.target.value,
-      }
-    })
-    try {
-      const res = await getCategory({
-        ...params,
-        search: event.target.value,
-      })
-      setData(res)
-    } catch (error) {
-      setParams(() => {
-        return {
-          limit: 10,
-          page: 1,
-          search: event.target.value,
-        }
-      })
-      setData((prevState) => {
-        return {
+        search: searchValue,
+      }))
+      try {
+        const res = await getCategory({
+          ...params,
+          search: searchValue,
+        })
+        setData(res)
+      } catch (error) {
+        setData((prevState) => ({
           ...prevState,
           data: prevState.data.filter((item) =>
-            item.name.toLowerCase().includes(event.target.value.toLowerCase())
+            item.name.toLowerCase().includes(searchValue.toLowerCase())
           ),
-        }
-      })
-    }
-  })
+        }))
+      }
+    }),
+    [params]
+  )
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -253,101 +245,111 @@ export default function List() {
       </div>
       <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
         <div className="relative w-full">
+        <Suspense fallback={<div>Loading search...</div>}>
           <Input onChange={onChangeSearch} className="pl-10 w-[240px]" />
           <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
-        </div>
-        <ModalComponent
-          open={open}
-          onOpenChange={setOpen}
-          title={edit ? 'Edit Category' : 'Add Category'}
-        >
-          <ModalComponent.ButtonModal>
-            <Button className="bg-blue-500">
-              {edit ? 'Edit' : 'Add'} Category
-            </Button>
-          </ModalComponent.ButtonModal>
-          <ModalComponent.Description>
-            <div>
-              <Form {...form}>
-                <form id="my-form">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field, formState }) => (
-                      <FormItem>
-                        <FormLabel>Category</FormLabel>
-                        <FormControl>
-                          <Input
-                            className={twMerge(
-                              form.formState.errors.name &&
-                                'border border-red-500 '
-                            )}
-                            placeholder="name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <If condition={!!formState.errors.name?.message}>
-                          <FormMessage className="text-red-500">
-                            {form.formState.errors.name?.message}
-                          </FormMessage>
-                        </If>
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-            </div>
-          </ModalComponent.Description>
-
-          <ModalComponent.Footer>
-            <div className=" w-full justify-end gap-3 flex">
-              <Button
-                className="bg-blue-500 mt-3 bg-transparent text-black hover:bg-transparent shadow-none border border-slate-200"
-                onClick={() => setOpen(false)}
-              >
-                close
-              </Button>
-              <Button
-                color="green"
-                type="submit"
-                className="w-fit bg-blue-500 mt-3 hover:bg-blue-700 shadow-none"
-                onClick={form.handleSubmit(onSubmit)}
-              >
-                Submit
-              </Button>
-            </div>
-          </ModalComponent.Footer>
-        </ModalComponent>
-        <AlertModal
-          title="Delete Articles"
-          open={openModal.show}
-          onOpenChange={setOpenModal}
-        >
-          <AlertModal.Description>
-            Delete category “{openModal.category}”? This will remove it from
-            master data permanently.
-          </AlertModal.Description>
-          <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
-            Cancel
-          </AlertModal.Cancel>
-          <AlertModal.Action
-            asChild
-            className="bg-red-500 hover:bg-red-500"
-            onClick={onDelete}
+        </Suspense>
+      </div>
+        <Suspense>
+          <ModalComponent
+            open={open}
+            onOpenChange={setOpen}
+            title={edit ? 'Edit Category' : 'Add Category'}
           >
-            Delete
-          </AlertModal.Action>
-        </AlertModal>
+            <ModalComponent.ButtonModal>
+              <Button className="bg-blue-500">
+                {edit ? 'Edit' : 'Add'} Category
+              </Button>
+            </ModalComponent.ButtonModal>
+            <ModalComponent.Description>
+              <div>
+                <Form {...form}>
+                  <form id="my-form">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field, formState }) => (
+                        <FormItem>
+                          <FormLabel>Category</FormLabel>
+                          <FormControl>
+                            <Input
+                              className={twMerge(
+                                form.formState.errors.name &&
+                                  'border border-red-500 '
+                              )}
+                              placeholder="name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <If condition={!!formState.errors.name?.message}>
+                            <FormMessage className="text-red-500">
+                              {form.formState.errors.name?.message}
+                            </FormMessage>
+                          </If>
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+            </ModalComponent.Description>
+
+            <ModalComponent.Footer>
+              <div className=" w-full justify-end gap-3 flex">
+                <Button
+                  className="bg-blue-500 mt-3 bg-transparent text-black hover:bg-transparent shadow-none border border-slate-200"
+                  onClick={() => setOpen(false)}
+                >
+                  close
+                </Button>
+                <Button
+                  color="green"
+                  type="submit"
+                  className="w-fit bg-blue-500 mt-3 hover:bg-blue-700 shadow-none"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  Submit
+                </Button>
+              </div>
+            </ModalComponent.Footer>
+          </ModalComponent>
+        </Suspense>
+        <Suspense>
+          <AlertModal
+            title="Delete Articles"
+            open={openModal.show}
+            onOpenChange={setOpenModal}
+          >
+            <AlertModal.Description>
+              Delete category “{openModal.category}”? This will remove it from
+              master data permanently.
+            </AlertModal.Description>
+            <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+              Cancel
+            </AlertModal.Cancel>
+            <AlertModal.Action
+              asChild
+              className="bg-red-500 hover:bg-red-500"
+              onClick={onDelete}
+            >
+              Delete
+            </AlertModal.Action>
+          </AlertModal>
+        </Suspense>
       </div>
       <div className="mt-8">
-        <TableComponent fields={fields} items={data.data || []} />
+        <Suspense>
+          <TableComponent fields={fields} items={data.data || []} />
+        </Suspense>
         <div className="mt-5">
-          <PaginationComponents
-            page={params.page}
-            setParams={setParams}
-            pageSize={params.limit ?? 10}
-            totalCount={data.totalData}
-          />
+          <Suspense fallback={<div>Loading pagination...</div>}>
+            <PaginationComponents
+              page={params.page}
+              setParams={setParams}
+              pageSize={params.limit ?? 10}
+              totalCount={data.totalData}
+            />
+          </Suspense>
         </div>
       </div>
     </Fragment>

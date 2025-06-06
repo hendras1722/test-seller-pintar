@@ -1,3 +1,5 @@
+'use client'
+
 import { Children } from 'react'
 
 interface ArrayMapProps<T> {

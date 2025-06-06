@@ -15,7 +15,10 @@ export async function adminMiddleware(request: NextRequest) {
       sameSite: 'lax',
       secure: true
     })
-    if (!getMeResponse.data) return NextResponse.redirect(new URL('/login', request.url))
+    if (!getMeResponse.data) {
+      response.cookies.delete('me')
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
       if (
         pathname.startsWith('/login') &&
         getMeResponse.data.role.toLowerCase() === 'admin'

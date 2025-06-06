@@ -7,11 +7,23 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { IconLogoLight } from '@/components/Icon'
 import Profile from '@/components/client/Profile'
+import ArrayMap from '@/components/ArrayMap'
 
 export default function Account() {
   const cookieStore = Cookies.get('me')
   const getMe = cookieStore
   const router = useRouter()
+
+  const profile = [
+    {
+      key: 'Username',
+      value: getMe && JSON.parse(getMe).username,
+    },
+    {
+      key: 'Role',
+      value: getMe && JSON.parse(getMe).role,
+    },
+  ]
   return (
     <Fragment>
       <div className="w-full  flex justify-between">
@@ -46,35 +58,23 @@ export default function Account() {
               </div>
             </div>
             <div className="space-y-3 max-w-sm mx-auto">
-              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
-                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
-                  <span className="w-[97px]">Username</span>
-                  <span>:</span>
-                </div>
-                <span className="text-gray-800 w-[210px] text-center">
-                  James Dean
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
-                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
-                  <span className="w-[97px]">Password</span>
-                  <span>:</span>
-                </div>
-                <span className="text-gray-800 w-[210px] text-center">
-                  Admin123
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
-                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
-                  <span className="w-[97px]">Role</span>
-                  <span>:</span>
-                </div>
-                <span className="text-gray-800 w-[210px] text-center">
-                  User
-                </span>
-              </div>
+              <ArrayMap
+                of={profile}
+                render={(item, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200"
+                  >
+                    <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
+                      <span className="w-[97px]">{item.key}</span>
+                      <span>:</span>
+                    </div>
+                    <span className="text-gray-800 w-[210px] text-center">
+                      {item.value}
+                    </span>
+                  </div>
+                )}
+              />
             </div>
           </div>
           <Button

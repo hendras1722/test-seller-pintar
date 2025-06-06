@@ -54,9 +54,9 @@ export default function LoginClient() {
 
       setAuthToken(data?.token as string)
       if (data?.role.toLowerCase() === 'admin') {
-        router.push('/admin/category')
+        window.location.href = '/admin/category'
       } else {
-        router.push('/article')
+        window.location.href = '/article'
       }
 
       return

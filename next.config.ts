@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
- 
+  reactStrictMode: true,
   /* config options here */
   async rewrites() {
     return {
@@ -57,7 +57,6 @@ const nextConfig: NextConfig = {
       ],
     },
   ],
-  
 }
 
 export default nextConfig

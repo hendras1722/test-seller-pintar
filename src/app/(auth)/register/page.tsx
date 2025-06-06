@@ -57,8 +57,8 @@ export default function LoginClient() {
     },
   })
 
+  const axios = useAxios<{ token: string; role: string }>()
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const axios = useAxios<{ token: string; role: string }>()
     const { error } = await axios('/auth/register', {
       method: 'POST',
       body: { ...values },
@@ -187,7 +187,7 @@ export default function LoginClient() {
                 <Button
                   color="green"
                   type="submit"
-                  className="my-8 w-full bg-blue-600 "
+                  className="my-8 w-full bg-blue-600 hover:bg-blue-500 "
                 >
                   Register
                 </Button>

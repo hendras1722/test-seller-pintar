@@ -135,7 +135,7 @@ export default function LoginClient() {
                 <Button
                   color="green"
                   type="submit"
-                  className="my-8 w-full bg-blue-600 "
+                  className="my-8 w-full bg-blue-600 hover:bg-blue-500"
                 >
                   Login
                 </Button>

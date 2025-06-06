@@ -1,11 +1,10 @@
 'use client'
 
 import React, { Fragment, useEffect } from 'react'
-import BreadcrumbClient from '@/components/client/Breadcumb'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Pencil, Search, Trash2 } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { ListCategory, ResultGetCategory } from '@/type/category'
 import { debounce } from 'radash'
 import { editCategory, getCategory } from '@/api/category'
@@ -69,6 +68,7 @@ export default function List() {
     {
       label: 'title',
       key: 'name',
+      render: (item) => item.name,
     },
     {
       label: 'Created At',

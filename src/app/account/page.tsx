@@ -6,7 +6,6 @@ import { Fragment } from 'react'
 import Profile from '../admin/Profile'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { get } from 'http'
 import { IconLogoLight } from '@/components/Icon'
 
 export default function Account() {

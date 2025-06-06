@@ -18,12 +18,10 @@ import List from './List'
 import { useRouter } from 'next/navigation'
 import { useRoute } from '@/composable/useRoute'
 import InputSearch from './InputSearch'
-import Cookies from 'js-cookie'
 import Profile from '../admin/Profile'
 import { IconLogoWhite } from '@/components/Icon'
 
 export default function Landing() {
-  const cookieStore = Cookies.get('me')
   const [categories, setCategories] = useState<ResultGetCategory>({
     data: [],
     totalData: 0,

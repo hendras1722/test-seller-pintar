@@ -15,8 +15,7 @@ export async function adminMiddleware(request: NextRequest) {
       sameSite: 'lax',
       secure: true
     })
-    console.log(getMeResponse)
-    if (!getMeResponse.data) return
+    if (!getMeResponse.data) return NextResponse.redirect(new URL('/login', request.url))
       if (
         pathname.startsWith('/login') &&
         getMeResponse.data.role.toLowerCase() === 'admin'

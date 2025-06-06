@@ -84,7 +84,7 @@ export default function DetailArticle() {
           </Suspense>
         </div>
       </header>
-      <div className="md:px-[60px] px-5 py-[40px] min-h-[450px]">
+      <div className="md:px-[160px] px-5 py-[40px] min-h-[450px]">
         <div className="text-center">
           <span>
             {data?.createdAt && format(data.createdAt, 'MMM dd, yyyy')} •

@@ -13,6 +13,12 @@ export const getArticleDetail = async (query?): Promise<ListArticles> => {
 }
 
 
+/**
+ * Edit an article
+ * @param {object} body - The body of the request
+ * @param {string} query - The id of the article to edit
+ * @returns {object} - A promise that resolves to an object containing the data and error
+ */
 export const editArticle = async (body?, query?) => {
    const axios = useAxios<{ token: string; role: string }>()
    const { error ,data} = await axios('/articles/' + query, {

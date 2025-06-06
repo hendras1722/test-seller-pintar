@@ -22,7 +22,6 @@ export default function List() {
   }
   const { md } = useBreakpoints(breakpoints)
   const route = useRoute()
-  const router = useRouter()
   const [item, setItem] = useState<ResutGetArticles>({
     data: [],
     total: 0,
@@ -30,16 +29,7 @@ export default function List() {
     limit: 0,
   })
   const [params, setParams] = useState({ page: 1, limit: 10, search: '' })
-
-  function handlePagination() {
-    const searchParams = new URLSearchParams(route.searchParams)
-
-    if (searchParams.get('page') === null) searchParams.set('page', '')
-    if (searchParams.get('title') === null) searchParams.set('title', '')
-    if (searchParams.get('category') === null) searchParams.set('category', '')
-    const newUrl = `${window.location.pathname}?${searchParams.toString()}`
-    router.push(newUrl)
-  }
+  const router = useRouter()
 
   async function fetchData() {
     let searchParams = {
@@ -56,13 +46,18 @@ export default function List() {
   }
   useEffect(() => {
     fetchData()
-  }, [])
-  useEffect(() => {
-    console.log(route.searchParams.size)
-    if (route.searchParams.size > 0) {
-      fetchData()
-    }
   }, [route])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(route.searchParams)
+    if (searchParams.get('page') === null) searchParams.set('page', '')
+    if (searchParams.get('title') === null) searchParams.set('title', '')
+    if (searchParams.get('category') === null) searchParams.set('category', '')
+
+    searchParams.set('page', params.page.toString())
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`
+    router.push(newUrl)
+  }, [params.page])
 
   return (
     <Fragment>

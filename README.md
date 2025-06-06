@@ -51,5 +51,6 @@ npm run start
 ## 💡 Catatan
 
 * Pastikan Node.js versi 22.
+* Tambahkan env NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 ---

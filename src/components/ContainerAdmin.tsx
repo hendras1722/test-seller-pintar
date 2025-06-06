@@ -9,7 +9,10 @@ export default function ContainerAdmin({
 }>) {
   return (
     <div
-      className={cn('border border-slate-200 rounded-lg bg-white', className)}
+      className={cn(
+        'border border-slate-200 rounded-lg bg-white pb-5',
+        className
+      )}
     >
       {children}
     </div>

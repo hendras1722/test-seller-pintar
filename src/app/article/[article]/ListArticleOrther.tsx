@@ -14,7 +14,7 @@ export default function ListArticleOrther({
     <div className="p-4 rounded mt-10">
       <h4>Other articles</h4>
 
-      <div className="grid grid-cols-3 grid-rows-1 gap-5 mt-5">
+      <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-1 gap-5 mt-5">
         <ArrayMap
           of={articleOrther}
           render={(item, index) => (

@@ -4,27 +4,11 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { TableComponent } from '@/components/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import DatePicker from '@/components/client/Datepicker'
-import { Pencil, Search, Trash2 } from 'lucide-react'
+import { Search, Trash2 } from 'lucide-react'
 import { ListArticles, ResutGetArticles } from '@/type/article'
 import { debounce } from 'radash'
-import { editArticle, getArticle } from '@/api/article'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import ModalComponent from '@/components/client/Modal'
 import { useAxios } from '@/composable/useAxios'
-import { apiEndpoint } from '@/type/endpoint'
 import { notify } from '@/utils/Notify'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { twMerge } from 'tailwind-merge'
 import { Else, If } from '@/components/if'
 import PaginationComponents from '@/components/client/PaginationComponents'
 import { getCategory } from '@/api/category'
@@ -38,33 +22,32 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import ArrayMap from '@/components/ArrayMap'
-import RichTextEditor from '@/components/client/tiptap'
-import { format, subDays } from 'date-fns'
+import { format } from 'date-fns'
 import LoadingPages from '@/components/server/LoadingPages'
 import { useRouter } from 'next/navigation'
+import { getArticle } from '@/api/article'
+import AlertModal from '@/components/client/AlertModal'
 
 export default function List() {
-  const yesterday = subDays(new Date(), 1)
-  const formattedYesterday = format(yesterday, 'yyyy-MM-dd')
-
   const [data, setData] = React.useState<ResutGetArticles>({
     data: [],
     total: 0,
     page: 1,
     limit: 10,
   })
-  const [params, setParams] = React.useState({ page: 1, limit: 10, title: '' })
-  const [open, setOpen] = React.useState(false)
-  const [edit, setEdit] = React.useState({
-    isEdit: false,
-    data: {} as ListArticles,
+  const [params, setParams] = React.useState({
+    page: 1,
+    limit: 10,
+    title: '',
+    category: '',
+  })
+  const [openModal, setOpenModal] = useState({
+    show: false,
+    id: '',
   })
   const [categoryItem, setCategoryItem] = React.useState<ResultGetCategory>()
   const [isLoading, setIsLoading] = useState(false)
-  const [payload, setPayload] = React.useState({
-    title: '',
-    categoryId: '',
-  })
+
   const router = useRouter()
 
   const axios = useAxios()
@@ -106,23 +89,26 @@ export default function List() {
         return (
           <div className="flex flex-row gap-2">
             <Button
-              className="bg-transparent text-underline text-blue-600 shadow-none hover:shadow-none hover:bg-transparent hover:text-blue-600"
-              onClick={() => onEdit(item)}
+              className="underline bg-transparent text-underline text-blue-600 shadow-none  hover:bg-transparent hover:text-blue-600"
+              onClick={() => onPreview(item)}
             >
               Preview
             </Button>{' '}
             <Button
-              className="bg-transparent text-underline text-blue-600 shadow-none hover:shadow-none hover:bg-transparent hover:text-blue-600"
+              className="underline bg-transparent text-underline text-blue-600 shadow-none  hover:bg-transparent hover:text-blue-600"
               onClick={() => onEdit(item)}
             >
               Edit
             </Button>{' '}
             <Button
-              className="bg-transparent text-underline text-red-500 shadow-none hover:shadow-none hover:bg-transparent hover:text-red-500"
-              onClick={() => onDelete(item.id)}
+              className="underline bg-transparent text-underline text-red-500 shadow-none  hover:bg-transparent hover:text-red-500"
+              onClick={() =>
+                setOpenModal({
+                  show: true,
+                  id: item.id,
+                })
+              }
             >
-              {' '}
-              <Trash2 />
               Delete
             </Button>
           </div>
@@ -132,6 +118,7 @@ export default function List() {
   ]
 
   useEffect(() => {
+    localStorage.removeItem('preview')
     getCategory().then((res) => {
       setCategoryItem(res)
     })
@@ -139,6 +126,7 @@ export default function List() {
 
   function getListArticle(e?: number) {
     setIsLoading(true)
+    if (params.category === 'All') params.category = ''
     getArticle({
       ...params,
       page: e ?? params.page,
@@ -153,8 +141,8 @@ export default function List() {
     getListArticle()
   }, [params])
 
-  const onDelete = async (e) => {
-    const { error } = await axios('/articles/' + e, {
+  const onDelete = async () => {
+    const { error } = await axios('/articles/' + openModal.id, {
       method: 'DELETE',
     })
     if (!error) {
@@ -182,18 +170,34 @@ export default function List() {
       limit: 10,
       page: 1,
       title: event.target.value,
+      category: params.category,
     })
   })
 
+  function onPreview(e: ListArticles) {
+    const data = {
+      imageUrl: e.imageUrl,
+      title: e.title,
+      content: e.content,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      id: e.id,
+      userId: e.userId,
+      categoryId: e.categoryId,
+      category: e.category.name,
+      user: e.user.username,
+    }
+    localStorage.setItem('preview', JSON.stringify(data))
+    window.open(
+      '/article/preview',
+      'articlePreview',
+      'height=768,width=1366,left=10,top=10,titlebar=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+    )
+  }
+
   function onEdit(e: ListArticles) {
-    // form.setValue('title', e.title)
-    // form.setValue('content', e.content)
-    // form.setValue('categoryId', e.categoryId)
-    // setEdit({
-    //   isEdit: true,
-    //   data: e,
-    // })
-    // setOpen(true)
+    localStorage.removeItem('preview')
+    router.push('/admin/article/edit/' + e.id)
   }
 
   return (
@@ -207,8 +211,8 @@ export default function List() {
       <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
         <div className="flex flex-row gap-2">
           <Select
-            value={payload.categoryId}
-            onValueChange={(e) => setPayload({ ...payload, categoryId: e })}
+            value={params.category}
+            onValueChange={(e) => setParams({ ...params, category: e })}
           >
             <SelectTrigger className="md:w-[180px] w-full text-foreground bg-white">
               <SelectValue
@@ -219,6 +223,7 @@ export default function List() {
             <SelectContent>
               <If condition={!!(categoryItem && categoryItem.data.length > 0)}>
                 <SelectGroup>
+                  <SelectItem value={'All'}>All</SelectItem>
                   <ArrayMap
                     of={
                       (categoryItem && categoryItem.data.filter((e) => e.id)) ||
@@ -261,6 +266,27 @@ export default function List() {
           />
         </div>
       </div>
+
+      <AlertModal
+        title="Delete Articles"
+        open={openModal.show}
+        onOpenChange={setOpenModal}
+      >
+        <AlertModal.Description>
+          Deleting this article is permanent and cannot be undone. All related
+          content will be removed.
+        </AlertModal.Description>
+        <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+          Cancel
+        </AlertModal.Cancel>
+        <AlertModal.Action
+          asChild
+          className="bg-red-500 hover:bg-red-500"
+          onClick={onDelete}
+        >
+          Delete
+        </AlertModal.Action>
+      </AlertModal>
     </Fragment>
   )
 }

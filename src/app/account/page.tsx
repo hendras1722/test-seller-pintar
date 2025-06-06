@@ -1,115 +1,90 @@
 'use client'
-import { getArticle, getArticleDetail } from '@/api/article'
-import { format } from 'date-fns'
-import { Suspense, useEffect, useState } from 'react'
-import ListArticleOrther from './ListArticleOrther'
-import { ListArticles } from '@/type/article'
-import { useRoute } from '@/composable/useRoute'
-import Cookies from 'js-cookie'
-import { If } from '@/components/if'
-import Profile from '@/app/admin/Profile'
-import { IconLogoLight } from '@/components/Icon'
-import { useRouter } from 'next/navigation'
 
-export default function DetailArticle() {
+import { If } from '@/components/if'
+import Cookies from 'js-cookie'
+import { Fragment } from 'react'
+import Profile from '../admin/Profile'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import { get } from 'http'
+import { IconLogoLight } from '@/components/Icon'
+
+export default function Account() {
   const cookieStore = Cookies.get('me')
   const getMe = cookieStore
-  const [data, setData] = useState<ListArticles>()
-  const [article, setArticle] = useState<ListArticles[]>([])
-  const route = useRoute()
   const router = useRouter()
-
-  useEffect(() => {
-    if (route.pathname.includes('preview')) {
-      console.log(localStorage)
-      const cookieStore = localStorage.getItem('preview')
-      if (cookieStore) {
-        const data = JSON.parse(cookieStore)
-
-        async function getData() {
-          const article = await getArticle({
-            category: data.categoryId,
-          })
-
-          const articleOrther = article.data
-            .filter((item) => item.id !== data.id)
-            .slice(0, 3)
-          setArticle(articleOrther)
-        }
-        getData()
-        setData({
-          imageUrl: data.imageUrl,
-          title: data.title,
-          content: data.content,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-          id: data.id,
-          userId: data.userId,
-          categoryId: data.categoryId,
-          category: data.category,
-          user: data.user,
-        })
-      }
-      return
-    }
-    async function getData() {
-      const data = await getArticleDetail(route.pathname.split('/').pop())
-      setData(data)
-      const article = await getArticle({
-        category: data.categoryId,
-      })
-
-      const articleOrther = article.data
-        .filter((item) => item.id !== data.id)
-        .slice(0, 3)
-      setArticle(articleOrther)
-    }
-    getData()
-  }, [])
-
   return (
-    <div id="article" className="min-h-screen">
-      <header className="p-3 md:px-[60px] px-5 py-[36px] border-b border-slate-200">
-        <div className="w-full  flex justify-between">
-          <button onClick={() => router.push('/article')}>
+    <Fragment>
+      <div className="w-full  flex justify-between">
+        <header className="p-3 md:px-[60px] px-5 py-[36px] border-b border-slate-200 w-full">
+          <div className="w-full  flex justify-between">
             <IconLogoLight />
-          </button>
 
-          <Profile>
-            <span className="!text-black">
-              {getMe && JSON.parse(getMe).username}
-            </span>
-          </Profile>
-        </div>
-      </header>
-      <div className="md:px-[60px] px-5 py-[40px] min-h-[450px]">
-        <div className="text-center">
-          <span>
-            {data?.createdAt && format(data.createdAt, 'MMM dd, yyyy')} •
-            created by {data?.user.username}
-          </span>
-        </div>
-        <h1 className="text-[31px] text-center mt-4">{data?.title}</h1>
-        <div className="mt-5">
-          <If condition={!!data?.imageUrl}>
-            <img
-              src={data?.imageUrl}
-              width={1600}
-              className="rounded-xl"
-              alt="article"
-            />
-          </If>
-        </div>
-        <p
-          className="mt-5 text-[16px]"
-          dangerouslySetInnerHTML={{ __html: data?.content ?? '' }}
-        ></p>
-
-        <Suspense>
-          <ListArticleOrther articleOrther={article} />
-        </Suspense>
+            <Profile>
+              <span className="text-black">
+                {getMe && JSON.parse(getMe).username}
+              </span>{' '}
+            </Profile>
+          </div>
+        </header>
       </div>
-      <footer className="bg-[linear-gradient(rgba(37,99,235,0.86),rgba(37,99,235,0.86))] w-full flex md:flex-row flex-col justify-center gap-3   md:px-[506px] px-[62.5px] py-[37px] mt-[100px]">
+      <div className="min-h-[calc(100vh-96px)] flex-1 flex justify-center items-center">
+        <div>
+          <div>
+            <h4 className="font-semibold text-center">User Profile</h4>
+            <div className="flex justify-center items-center gap-2 focus:outline-none focus:border-none mt-9 mb-6">
+              <div className="rounded-full bg-blue-200 text-blue-900 font-semibold min-w-[68px] min-h-[68px] flex justify-center items-center text-[24px] ">
+                <If condition={getMe}>
+                  {getMe &&
+                    JSON.parse(getMe)
+                      .username.split(' ')
+                      .map((item) => item.slice(0, 1).toUpperCase())
+                      .slice(0, 2)
+                      .join('')}
+                </If>
+              </div>
+            </div>
+            <div className="space-y-3 max-w-sm mx-auto">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
+                  <span className="w-[97px]">Username</span>
+                  <span>:</span>
+                </div>
+                <span className="text-gray-800 w-[210px] text-center">
+                  James Dean
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
+                  <span className="w-[97px]">Password</span>
+                  <span>:</span>
+                </div>
+                <span className="text-gray-800 w-[210px] text-center">
+                  Admin123
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="flex gap-2 font-semibold text-gray-800 min-w-[100px]">
+                  <span className="w-[97px]">Role</span>
+                  <span>:</span>
+                </div>
+                <span className="text-gray-800 w-[210px] text-center">
+                  User
+                </span>
+              </div>
+            </div>
+          </div>
+          <Button
+            className="w-[368px] bg-blue-600 hover:bg-blue-600  mt-9"
+            onClick={() => router.push('/article')}
+          >
+            Back to home
+          </Button>
+        </div>
+      </div>
+      <footer className="bg-[linear-gradient(rgba(37,99,235,0.86),rgba(37,99,235,0.86))]  w-full flex md:flex-row flex-col justify-center gap-3   md:px-[506px] px-[62.5px] py-[37px] mt-[100px]">
         <div className="grid place-items-center md:block">
           <svg
             width="134"
@@ -177,10 +152,6 @@ export default function DetailArticle() {
           © 2025 Blog genzet. All rights reserved.
         </small>
       </footer>
-    </div>
+    </Fragment>
   )
 }
-
-export const dynamic = 'force-dynamic'
-
-export const experimental_ppr = true

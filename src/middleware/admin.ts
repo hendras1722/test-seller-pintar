@@ -10,17 +10,26 @@ export async function adminMiddleware(request: NextRequest) {
   
   if (token) {
     const getMeResponse = await getMe()
-console.log(getMeResponse)
     response.cookies.set('me', JSON.stringify(getMeResponse.data), {
-      path: '/admin', 
       maxAge: 60 * 60 * 24 * 7,
       sameSite: 'lax',
       secure: true
     })
-    
-    if (pathname.startsWith('/login')){
-      return NextResponse.redirect(new URL('/admin/category', request.url))
-    }
+    console.log(getMeResponse)
+    if (!getMeResponse.data) return
+      if (
+        pathname.startsWith('/login') &&
+        getMeResponse.data.role.toLowerCase() === 'admin'
+      ) {
+        return NextResponse.redirect(new URL('/admin/category', request.url))
+      } else {
+        if (
+          pathname.startsWith('/login') &&
+          getMeResponse.data.role.toLowerCase() === 'user'
+        ) {
+          return NextResponse.redirect(new URL('/article', request.url))
+        }
+      }
   } else {
     response.cookies.delete('me')
     if (pathname.startsWith('/admin')) {
@@ -35,6 +44,8 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/login',
+    '/article',
+    '/article/:path*',
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 }

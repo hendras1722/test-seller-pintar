@@ -27,6 +27,9 @@ import {
 import { twMerge } from 'tailwind-merge'
 import { If } from '@/components/if'
 import PaginationComponents from '@/components/client/PaginationComponents'
+import { format } from 'date-fns'
+import AlertModal from '@/components/client/AlertModal'
+import LoadingPages from '@/components/server/LoadingPages'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -34,9 +37,7 @@ const formSchema = z.object({
   }),
 })
 
-export default function List({
-  category,
-}: Readonly<{ category: ResultGetCategory }>) {
+export default function List() {
   const [data, setData] = React.useState<ResultGetCategory>({
     data: [],
     totalData: 0,
@@ -49,6 +50,12 @@ export default function List({
     isEdit: false,
     data: {} as ListCategory,
   })
+  const [openModal, setOpenModal] = React.useState({
+    show: false,
+    id: '',
+    category: '',
+  })
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const axios = useAxios()
 
@@ -58,18 +65,16 @@ export default function List({
     }
   }, [open])
 
-  const listBreadcrumb = [
-    { label: 'Dashboard', href: '', disabled: true },
-    { label: 'Category', href: '/admin/category' },
-  ]
   const fields = [
-    {
-      label: 'Category Id',
-      key: 'id',
-    },
     {
       label: 'title',
       key: 'name',
+    },
+    {
+      label: 'Created At',
+      key: 'createdAt',
+      render: (item) =>
+        format(new Date(item.createdAt), 'MMM dd, yyyy HH:mm:ss'),
     },
     {
       label: 'Actions',
@@ -77,14 +82,18 @@ export default function List({
       render: (item) => {
         return (
           <>
-            <Button className="bg-blue-500 mr-5" onClick={() => onEdit(item)}>
-              {' '}
-              <Pencil />
+            <Button
+              className="bg-transparent text-underline text-blue-600 shadow-none  hover:bg-transparent hover:text-blue-600 underline"
+              onClick={() => onEdit(item)}
+            >
               Edit
             </Button>{' '}
-            <Button className="bg-red-500" onClick={() => onDelete(item.id)}>
-              {' '}
-              <Trash2 />
+            <Button
+              className="bg-transparent text-underline text-red-500 shadow-none  hover:bg-transparent hover:text-red-500 underline"
+              onClick={() =>
+                setOpenModal({ show: true, id: item.id, category: item.name })
+              }
+            >
               Delete
             </Button>
           </>
@@ -94,20 +103,23 @@ export default function List({
   ]
 
   function getListCategory(e?: number) {
+    setIsLoading(true)
     getCategory({
       ...params,
       page: e ?? params.page,
-    }).then((res) => {
-      setData(res)
     })
+      .then((res) => {
+        setData(res)
+      })
+      .finally(() => setIsLoading(false))
   }
 
   useEffect(() => {
     getListCategory()
   }, [params])
 
-  const onDelete = async (e) => {
-    const { error } = await axios('/categories/' + e, {
+  const onDelete = async () => {
+    const { error } = await axios('/categories/' + openModal.id, {
       method: 'DELETE',
     })
     if (!error) {
@@ -233,75 +245,101 @@ export default function List({
 
   return (
     <Fragment>
-      <BreadcrumbClient items={listBreadcrumb} />
-      <div className="mt-8">
-        <div className="sm:flex gap-4 items-center mb-5">
-          <div className="relative w-full">
-            <Input onChange={onChangeSearch} className="pl-10 w-full" />
-            <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
-          </div>
-          <ModalComponent
-            open={open}
-            onOpenChange={setOpen}
-            title={'Add Category'}
-          >
-            <ModalComponent.ButtonModal>
-              <Button className="bg-blue-500">Add Category</Button>
-            </ModalComponent.ButtonModal>
-            <ModalComponent.Description>
-              <div>
-                <Form {...form}>
-                  <form id="my-form">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field, formState }) => (
-                        <FormItem>
-                          <FormLabel>name</FormLabel>
-                          <FormControl>
-                            <Input
-                              className={twMerge(
-                                form.formState.errors.name &&
-                                  'border border-red-500 '
-                              )}
-                              placeholder="name"
-                              {...field}
-                            />
-                          </FormControl>
-                          <If condition={!!formState.errors.name?.message}>
-                            <FormMessage className="text-red-500">
-                              {form.formState.errors.name?.message}
-                            </FormMessage>
-                          </If>
-                        </FormItem>
-                      )}
-                    />
-                  </form>
-                </Form>
-              </div>
-              {/* <FormCategory form={form}></FormCategory> */}
-            </ModalComponent.Description>
-
-            <ModalComponent.Footer>
-              <div className=" w-full grid place-items-center">
-                <Button
-                  color="green"
-                  type="submit"
-                  className="w-full bg-green-500 mt-3 hover:bg-green-700 shadow-none"
-                  onClick={form.handleSubmit(onSubmit)}
-                >
-                  Submit
-                </Button>
-                <Button
-                  className="bg-blue-500 mt-3 bg-transparent text-black hover:bg-transparent shadow-none"
-                  onClick={() => setOpen(false)}
-                >
-                  close
-                </Button>
-              </div>
-            </ModalComponent.Footer>
-          </ModalComponent>
+      <If condition={isLoading}>
+        <LoadingPages />
+      </If>
+      <div className=" px-6 py-[26px]">
+        <h6>Total Article: {data.totalData}</h6>
+      </div>
+      <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
+        <div className="relative w-full">
+          <Input onChange={onChangeSearch} className="pl-10 w-[240px]" />
+          <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
         </div>
+        <ModalComponent
+          open={open}
+          onOpenChange={setOpen}
+          title={edit ? 'Edit Category' : 'Add Category'}
+        >
+          <ModalComponent.ButtonModal>
+            <Button className="bg-blue-500">
+              {edit ? 'Edit' : 'Add'} Category
+            </Button>
+          </ModalComponent.ButtonModal>
+          <ModalComponent.Description>
+            <div>
+              <Form {...form}>
+                <form id="my-form">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field, formState }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <FormControl>
+                          <Input
+                            className={twMerge(
+                              form.formState.errors.name &&
+                                'border border-red-500 '
+                            )}
+                            placeholder="name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <If condition={!!formState.errors.name?.message}>
+                          <FormMessage className="text-red-500">
+                            {form.formState.errors.name?.message}
+                          </FormMessage>
+                        </If>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+            </div>
+          </ModalComponent.Description>
+
+          <ModalComponent.Footer>
+            <div className=" w-full justify-end gap-3 flex">
+              <Button
+                className="bg-blue-500 mt-3 bg-transparent text-black hover:bg-transparent shadow-none border border-slate-200"
+                onClick={() => setOpen(false)}
+              >
+                close
+              </Button>
+              <Button
+                color="green"
+                type="submit"
+                className="w-fit bg-blue-500 mt-3 hover:bg-blue-700 shadow-none"
+                onClick={form.handleSubmit(onSubmit)}
+              >
+                Submit
+              </Button>
+            </div>
+          </ModalComponent.Footer>
+        </ModalComponent>
+        <AlertModal
+          title="Delete Articles"
+          open={openModal.show}
+          onOpenChange={setOpenModal}
+        >
+          <AlertModal.Description>
+            Delete category “{openModal.category}”? This will remove it from
+            master data permanently.
+          </AlertModal.Description>
+          <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+            Cancel
+          </AlertModal.Cancel>
+          <AlertModal.Action
+            asChild
+            className="bg-red-500 hover:bg-red-500"
+            onClick={onDelete}
+          >
+            Delete
+          </AlertModal.Action>
+        </AlertModal>
+      </div>
+      <div className="mt-8">
         <TableComponent fields={fields} items={data.data || []} />
         <div className="mt-5">
           <PaginationComponents

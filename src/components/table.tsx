@@ -48,7 +48,7 @@ export function TableComponent<T extends Record<string, any>>({
             render={(field, index) => (
               <TableHead
                 key={'head' + index}
-                className={cn(field.class, 'w-fit')}
+                className={cn(field.class, 'w-fit text-center')}
                 style={{ width: field.width }}
               >
                 {field.label}
@@ -66,11 +66,15 @@ export function TableComponent<T extends Record<string, any>>({
                 of={fields}
                 render={(field, colIndex) => (
                   <If key={'cel' + colIndex} condition={!!field.render}>
-                    <TableCell className={cn(classCol, field.class)}>
+                    <TableCell
+                      className={cn(classCol, field.class, 'text-center')}
+                    >
                       {field.render?.(item, rowIndex)}
                     </TableCell>
                     <Else key={'cel' + colIndex}>
-                      <TableCell className={cn(classCol, field.class)}>
+                      <TableCell
+                        className={cn(classCol, field.class, 'text-center')}
+                      >
                         {(item[field.key] as string) ?? '-'}
                       </TableCell>
                     </Else>

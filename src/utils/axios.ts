@@ -4,8 +4,8 @@ import Cookies from 'js-cookie'
 const baseURL =
   typeof window !== 'undefined'
     ? '/seller-pintar/api/'
-    : 'http://localhost:3000/seller-pintar/api/'
-
+    : process.env.NEXT_PUBLIC_BASE_URL + '/seller-pintar/api/'
+console.log('Base URL:', process.env.NEXT_PUBLIC_BASE_URL)
 axios.defaults.baseURL = baseURL
 
 const getToken = async (): Promise<string | undefined> => {
@@ -68,6 +68,13 @@ axios.interceptors.response.use(
         console.error('Bad Request:', data)
         break
 
+      case 401:
+        console.error('Unauthorized - Invalid or expired token')
+        // Optionally clear invalid token
+        if (typeof window !== 'undefined') {
+          Cookies.remove('token')
+        }
+        break
       case 401:
         console.error('Unauthorized - Invalid or expired token')
         // Optionally clear invalid token

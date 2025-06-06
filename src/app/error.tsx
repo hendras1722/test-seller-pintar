@@ -5,18 +5,14 @@ export default function ErrorCustom({
   reset,
 }: Readonly<{ error: Error; reset: () => void }>) {
   return (
-    <html lang="en">
-      <body>
-        <div className="w-full min-h-screen bg-gray-300 flex flex-col items-center justify-center">
-          <div className="border-2 border-gray-500 shadow-lg rounded-lg p-5 bg-gray-200 min-h-[300px] grid place-items-center">
-            <h1>Error</h1>
-            <div
-              className="w-[600px] overflow-auto mt-10"
-              dangerouslySetInnerHTML={{ __html: error.stack ?? error.message }}
-            ></div>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div className="w-full min-h-screen bg-gradient-to-br from-gray-200 to-gray-400 flex flex-col items-center justify-center">
+      <div className="border border-gray-400 shadow-2xl rounded-2xl p-8 bg-white max-w-md text-center space-y-4 animate-fadeIn">
+        <h1>Error</h1>
+        <div
+          className="w-[600px] overflow-auto mt-10"
+          dangerouslySetInnerHTML={{ __html: error.stack ?? error.message }}
+        ></div>
+      </div>
+    </div>
   )
 }

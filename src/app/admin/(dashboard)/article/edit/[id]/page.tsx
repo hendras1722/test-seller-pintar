@@ -35,6 +35,8 @@ import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import { getArticleDetail } from '@/api/article'
+import { useRoute } from '@/composable/useRoute'
 
 export default function ArticleCreate() {
   const [categoryItem, setCategoryItem] = React.useState<ResultGetCategory>()
@@ -42,6 +44,7 @@ export default function ArticleCreate() {
   const getMe = Cookies.get('me')
 
   const router = useRouter()
+  const route = useRoute()
 
   const handleUploadImage = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -70,6 +73,12 @@ export default function ArticleCreate() {
   })
 
   useEffect(() => {
+    getArticleDetail(route.pathname.split('/').pop() as string).then((res) => {
+      form.setValue('categoryId', res.categoryId)
+      form.setValue('title', res.title)
+      form.setValue('content', res.content)
+      form.setValue('imageUrl', res.imageUrl)
+    })
     getCategory().then((res) => {
       setCategoryItem(res)
     })
@@ -88,10 +97,13 @@ export default function ArticleCreate() {
   const axios = useAxios()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { error } = await axios(apiEndpoint.POST_ARTICLE, {
-      method: 'POST',
-      body: values,
-    })
+    const { error } = await axios(
+      '/articles/' + route.pathname.split('/').pop(),
+      {
+        method: 'PUT',
+        body: values,
+      }
+    )
 
     if (!error) {
       await notify({
@@ -136,12 +148,14 @@ export default function ArticleCreate() {
       user: getMe && JSON.parse(getMe).username,
     }
     setReadyUpload(false)
-    Cookies.set('preview', JSON.stringify(data))
-    window.open(
-      '/article/preview',
-      'articlePreview',
-      'height=768,width=1366,left=10,top=10,titlebar=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
-    )
+    localStorage.setItem('preview', JSON.stringify(data))
+    setTimeout(() => {
+      window.open(
+        '/article/preview',
+        'articlePreview',
+        'height=768,width=1366,left=10,top=10,titlebar=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+      )
+    }, 200)
   }
 
   return (
@@ -153,7 +167,7 @@ export default function ArticleCreate() {
         >
           <ArrowLeft />
         </Button>{' '}
-        <span>Create Articles</span>
+        <span>Edit Articles</span>
       </div>
       <div className="mt-6">
         <Form {...form}>
@@ -165,7 +179,10 @@ export default function ArticleCreate() {
                 <FormItem>
                   <FormLabel>Thumbnails</FormLabel>
                   <FormControl>
-                    <UploadPhoto setImage={field.onChange} />
+                    <UploadPhoto
+                      setImage={field.onChange}
+                      image={field.value}
+                    />
                   </FormControl>
                   <If condition={!!formState.errors.imageUrl?.message}>
                     <FormMessage className="text-red-500">

@@ -44,14 +44,16 @@ export default function RootLayoutAdmin({
 
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
           <div className="p-2 flex justify-between items-center px-6 py-[21px] w-full">
-            <Button
-              onClick={() => setShow(!show)}
-              className="lg:hidden block border border-gray-300"
-            >
-              <Menu />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setShow(!show)}
+                className="lg:hidden block border border-gray-300 bg-transparent hover:bg-transparent text-black shadow-none focus:ring-0"
+              >
+                <Menu />
+              </Button>
 
-            <h5>Articles</h5>
+              <h5>Articles</h5>
+            </div>
             <Suspense>
               <Profile>
                 <span className="text-black">

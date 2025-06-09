@@ -247,24 +247,28 @@ export default function CategoryList() {
       <div className=" px-6 py-[26px]">
         <h6>Total Article: {data.totalData}</h6>
       </div>
-      <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
-        <div className="relative w-full">
+      <div className="flex gap-3 flex-wrap justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
+        <div className="relative md:w-fit w-full">
           <Suspense fallback={<div>Loading search...</div>}>
-            <Input onChange={onChangeSearch} className="pl-10 w-[240px]" />
+            <Input
+              onChange={onChangeSearch}
+              className="pl-10 md:w-[240px] w-full"
+            />
             <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
           </Suspense>
         </div>
-        <Suspense>
-          <ModalComponent
+        {/* <Suspense> */}
+        <Button
+          onClick={() => setOpen(true)}
+          className="bg-blue-500 lg:w-fit w-full"
+        >
+          {edit.isEdit ? 'Edit' : 'Add'} Category
+        </Button>
+        {/* <ModalComponent
             open={open}
             onOpenChange={setOpen}
             title={edit.isEdit ? 'Edit Category' : 'Add Category'}
           >
-            <ModalComponent.ButtonModal>
-              <Button className="bg-blue-500">
-                {edit.isEdit ? 'Edit' : 'Add'} Category
-              </Button>
-            </ModalComponent.ButtonModal>
             <ModalComponent.Description>
               <div>
                 <Form {...form}>
@@ -316,31 +320,31 @@ export default function CategoryList() {
                 </Button>
               </div>
             </ModalComponent.Footer>
-          </ModalComponent>
-        </Suspense>
-        <Suspense>
-          <AlertModal
-            title="Delete Articles"
-            open={openModal.show}
-            onOpenChange={setOpenModal}
-          >
-            <AlertModal.Description>
-              Delete category “{openModal.category}”? This will remove it from
-              master data permanently.
-            </AlertModal.Description>
-            <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
-              Cancel
-            </AlertModal.Cancel>
-            <AlertModal.Action
-              asChild
-              className="bg-red-500 hover:bg-red-500"
-              onClick={onDelete}
-            >
-              Delete
-            </AlertModal.Action>
-          </AlertModal>
-        </Suspense>
+          </ModalComponent> */}
+        {/* </Suspense> */}
       </div>
+      <Suspense>
+        <AlertModal
+          title="Delete Articles"
+          open={openModal.show}
+          onOpenChange={setOpenModal}
+        >
+          <AlertModal.Description>
+            Delete category “{openModal.category}”? This will remove it from
+            master data permanently.
+          </AlertModal.Description>
+          <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+            Cancel
+          </AlertModal.Cancel>
+          <AlertModal.Action
+            asChild
+            className="bg-red-500 hover:bg-red-500"
+            onClick={onDelete}
+          >
+            Delete
+          </AlertModal.Action>
+        </AlertModal>
+      </Suspense>
       <div className="mt-8">
         <Suspense>
           <TableComponent fields={fields} items={data.data || []} />

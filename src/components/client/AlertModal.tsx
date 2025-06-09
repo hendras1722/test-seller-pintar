@@ -53,7 +53,7 @@ export default function AlertModal({ children, open, onOpenChange, title }) {
             <AlertDialogTitle>{title}</AlertDialogTitle>
             {_description}
           </AlertDialogHeader>
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 item-center">
             {_cancel}
             {_action}
           </div>

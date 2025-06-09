@@ -159,7 +159,7 @@ export default function ArticleEdit() {
   }
 
   return (
-    <ContainerAdmin className="px-[20] py-[22]">
+    <ContainerAdmin className="px-[20px] py-[22px]">
       <div className="flex items-center gap-2">
         <Button
           onClick={() => router.push('/admin/article')}

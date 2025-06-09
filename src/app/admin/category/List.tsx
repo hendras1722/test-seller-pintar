@@ -60,6 +60,10 @@ export default function CategoryList() {
   useEffect(() => {
     if (!open) {
       form.reset()
+      setEdit({
+        isEdit: false,
+        data: {} as ListCategory,
+      })
     }
   }, [open])
 
@@ -245,20 +249,20 @@ export default function CategoryList() {
       </div>
       <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
         <div className="relative w-full">
-        <Suspense fallback={<div>Loading search...</div>}>
-          <Input onChange={onChangeSearch} className="pl-10 w-[240px]" />
-          <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
-        </Suspense>
-      </div>
+          <Suspense fallback={<div>Loading search...</div>}>
+            <Input onChange={onChangeSearch} className="pl-10 w-[240px]" />
+            <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
+          </Suspense>
+        </div>
         <Suspense>
           <ModalComponent
             open={open}
             onOpenChange={setOpen}
-            title={edit ? 'Edit Category' : 'Add Category'}
+            title={edit.isEdit ? 'Edit Category' : 'Add Category'}
           >
             <ModalComponent.ButtonModal>
               <Button className="bg-blue-500">
-                {edit ? 'Edit' : 'Add'} Category
+                {edit.isEdit ? 'Edit' : 'Add'} Category
               </Button>
             </ModalComponent.ButtonModal>
             <ModalComponent.Description>

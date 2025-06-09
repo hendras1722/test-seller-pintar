@@ -209,7 +209,7 @@ export default function ArticleList() {
         <div className=" px-6 py-[26px]">
           <h6>Total Article: {data.total}</h6>
         </div>
-        <div className="flex justify-between items-center  border-t border-b border-slate-200 py-[26px] px-6">
+        <div className="flex justify-between items-center flex-wrap  border-t border-b border-slate-200 py-[26px] px-6 gap-2">
           <div className="flex flex-row gap-2">
             <Suspense>
               <Select
@@ -248,7 +248,7 @@ export default function ArticleList() {
                 </SelectContent>
               </Select>
             </Suspense>
-            <div className="relative w-full">
+            <div className="relative w-full ">
               <Suspense>
                 <Input onChange={onChangeSearch} className="pl-10 w-full" />
                 <Search className="absolute top-0 left-2 w-5 translate-y-1 text-gray-400" />
@@ -257,7 +257,7 @@ export default function ArticleList() {
           </div>
           <Suspense>
             <Button
-              className="bg-blue-500"
+              className="bg-blue-500 lg:w-fit w-full"
               onClick={() => router.push('/admin/article/create')}
             >
               Add Article

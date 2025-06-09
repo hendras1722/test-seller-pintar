@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -149,171 +150,153 @@ export default function ArticleCreate() {
   return (
     <Suspense fallback={<LoadingPages />}>
       <ContainerAdmin className="px-[20] py-[22]">
-          <div className="flex items-center gap-2">
-              <Button
-                onClick={() => router.push('/admin/article')}
-                className="p-0 bg-transparent text-underline text-black shadow-none hover:shadow-none hover:bg-transparent hover:text-black"
-              >
-                <ArrowLeft />
-              </Button>{' '}
-            <span>Create Articles</span>
-          </div>
-          <div className="mt-6">
-              <Form {...form}>
-                <form id="my-form" onSubmit={form.handleSubmit(onSubmit)}>
-                  <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={({ field, formState }) => (
-                      <FormItem>
-                        <FormLabel>Thumbnails</FormLabel>
-                        <FormControl>
-                            <UploadPhoto setImage={field.onChange} />
-                        </FormControl>
-                        <If condition={!!formState.errors.imageUrl?.message}>
-                          <FormMessage className="text-red-500">
-                            {form.formState.errors.imageUrl?.message}
-                          </FormMessage>
-                        </If>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field, formState }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                            <Input
-                              className={twMerge(
-                                form.formState.errors.title &&
-                                  'border border-red-500'
-                              )}
-                              placeholder="Enter article title"
-                              {...field}
-                            />
-                        </FormControl>
-                        <If condition={!!formState.errors.title?.message}>
-                          <FormMessage className="text-red-500">
-                            {form.formState.errors.title?.message}
-                          </FormMessage>
-                        </If>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="categoryId"
-                    render={({ field, formState }) => (
-                      <FormItem>
-                        <FormLabel>Category</FormLabel>
-                        <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                              {...field}
-                            >
-                              <FormControl>
-                                <SelectTrigger
-                                  className={twMerge(
-                                    form.formState.errors.categoryId &&
-                                      '!border !border-red-500'
-                                  )}
-                                >
-                                  <SelectValue
-                                    placeholder={
-                                      field.value
-                                        ? undefined
-                                        : 'Select a category'
-                                    }
-                                  />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <ArrayMap
-                                  of={
-                                    categoryItem?.data?.filter(
-                                      (item) => item.id && item.id.trim() !== ''
-                                    ) ?? []
-                                  }
-                                  render={(e) => (
-                                    <SelectItem key={e.id} value={e.id}>
-                                      {e.name}
-                                    </SelectItem>
-                                  )}
-                                />
-                              </SelectContent>
-                            </Select>
-                            <small>
-                              The existing category list can be seen in the{' '}
-                              <Link
-                                className="text-blue-500 underline"
-                                href="/admin/category"
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => router.push('/admin/article')}
+            className="p-0 bg-transparent text-underline text-black shadow-none hover:shadow-none hover:bg-transparent hover:text-black"
+          >
+            <ArrowLeft />
+          </Button>{' '}
+          <span>Create Articles</span>
+        </div>
+        <div className="mt-6">
+          <Form {...form}>
+            <form id="my-form" onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field, formState }) => (
+                  <FormItem>
+                    <FormLabel>Thumbnails</FormLabel>
+                    <FormControl>
+                      <UploadPhoto setImage={field.onChange} />
+                    </FormControl>
+                    <If condition={!!formState.errors.imageUrl?.message}>
+                      <FormMessage className="text-red-500">
+                        {form.formState.errors.imageUrl?.message}
+                      </FormMessage>
+                    </If>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field, formState }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        className={twMerge(
+                          form.formState.errors.title && 'border border-red-500'
+                        )}
+                        placeholder="Enter article title"
+                        {...field}
+                      />
+                    </FormControl>
+                    <If condition={!!formState.errors.title?.message}>
+                      <FormMessage className="text-red-500">
+                        {form.formState.errors.title?.message}
+                      </FormMessage>
+                    </If>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field, formState }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Suspense>
+                        <>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            {...field}
+                          >
+                            <FormControl>
+                              <SelectTrigger
+                                className={twMerge(
+                                  form.formState.errors.categoryId &&
+                                    '!border !border-red-500'
+                                )}
                               >
-                                category
-                              </Link>{' '}
-                              menu
-                            </small>
-                        </FormControl>
-                        <If condition={!!formState.errors.categoryId?.message}>
-                          <FormMessage className="text-red-500">
-                            {form.formState.errors.categoryId?.message}
-                          </FormMessage>
-                        </If>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field, formState }) => (
-                      <FormItem>
-                        <FormLabel>Content</FormLabel>
-                        <FormControl>
-                            <RichTextEditor
-                              value={field.value}
-                              onChange={field.onChange}
-                              uploadImageFn={handleUploadImage}
-                            />
-                        </FormControl>
-                        <If condition={!!formState.errors.content?.message}>
-                          <FormMessage className="text-red-500">
-                            {form.formState.errors.content?.message}
-                          </FormMessage>
-                        </If>
-                      </FormItem>
-                    )}
-                  />
-                  <div className="mt-10 flex items-center gap-4 justify-end">
-                      <Button
-                        onClick={() => {
-                          form.reset()
-                          router.push('/admin/article')
-                        }}
-                        type="button"
-                        className="bg-white text-black hover:bg-white "
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        className="bg-slate-200 text-black hover:bg-slate-200"
-                        onClick={onPreview}
-                      >
-                        Preview
-                      </Button>
-                      <Button
-                        disabled={readyUpload}
-                        type="submit"
-                        className="bg-blue-500 hover:bg-blue-500"
-                      >
-                        Upload
-                      </Button>
-                  </div>
-                </form>
-              </Form>
-          </div>
+                                <SelectValue
+                                  placeholder={
+                                    field.value
+                                      ? undefined
+                                      : 'Select a category'
+                                  }
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <ArrayMap
+                                of={
+                                  categoryItem?.data?.filter(
+                                    (item) => item.id && item.id.trim() !== ''
+                                  ) ?? []
+                                }
+                                render={(e) => (
+                                  <SelectItem key={e.id} value={e.id}>
+                                    {e.name}
+                                  </SelectItem>
+                                )}
+                              />
+                            </SelectContent>
+                          </Select>
+                          <small>
+                            The existing category list can be seen in the{' '}
+                            <Link
+                              className="text-blue-500 underline"
+                              href="/admin/category"
+                            >
+                              category
+                            </Link>{' '}
+                            menu
+                          </small>
+                        </>
+                      </Suspense>
+                    </FormControl>
+                    <If condition={!!formState.errors.title?.message}>
+                      <FormMessage className="text-red-500">
+                        {form.formState.errors.title?.message}
+                      </FormMessage>
+                    </If>
+                  </FormItem>
+                )}
+              />
+              <div className="mt-10 flex items-center gap-4 justify-end">
+                <Button
+                  onClick={() => {
+                    form.reset()
+                    router.push('/admin/article')
+                  }}
+                  type="button"
+                  className="bg-white text-black hover:bg-white "
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-slate-200 text-black hover:bg-slate-200"
+                  onClick={onPreview}
+                >
+                  Preview
+                </Button>
+                <Button
+                  disabled={readyUpload}
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-500"
+                >
+                  Upload
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </ContainerAdmin>
     </Suspense>
   )

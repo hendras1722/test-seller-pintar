@@ -1,16 +1,12 @@
 'use client'
 
 import Body from '@/components/client/Body'
-import { LogOut, Newspaper, Tag } from 'lucide-react'
-import ArrayMap from '@/components/ArrayMap'
-import RouteLink from '@/components/route'
 import Cookies from 'js-cookie'
-import { cn } from '@/utils/lib'
-import { Else, If } from '@/components/if'
-import { IconLogoWhite } from '@/components/Icon'
-import { Suspense } from 'react'
-import ListMenu from '@/components/ListMenu'
+import React, { Suspense } from 'react'
 import Profile from '@/components/client/Profile'
+import SidebarComponent from '@/components/sidebar'
+import { Button } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
 
 export default function RootLayoutAdmin({
   children,
@@ -18,44 +14,43 @@ export default function RootLayoutAdmin({
   children: React.ReactNode
 }>) {
   const getMe = Cookies.get('me')
-  const menu = [
-    {
-      id: '0',
-      title: 'Article',
-      href: '/admin/article',
-      icon: () => <Newspaper />,
-    },
-    {
-      id: '1',
-      title: 'Category',
-      href: '/admin/category',
-      icon: () => <Tag />,
-    },
-    {
-      id: '2',
-      title: 'Logout',
-      href: '/login',
-      icon: () => <LogOut />,
-    },
-  ]
+  // const menu = [
+  //   {
+  //     id: '0',
+  //     title: 'Article',
+  //     href: '/admin/article',
+  //     icon: () => <Newspaper />,
+  //   },
+  //   {
+  //     id: '1',
+  //     title: 'Category',
+  //     href: '/admin/category',
+  //     icon: () => <Tag />,
+  //   },
+  //   {
+  //     id: '2',
+  //     title: 'Logout',
+  //     href: '/login',
+  //     icon: () => <LogOut />,
+  //   },
+  // ]
+
+  const [show, setShow] = React.useState(false)
 
   return (
     <Body>
       <div className="min-h-screen  flex w-full">
-        <div className="w-[267px] bg-blue-600 min-h-screen px-4 py-6">
-          <div className="flex justify-start w-full pl-5">
-            <IconLogoWhite />
-          </div>
-          <div className="mt-6">
-            <ul>
-              <Suspense>
-                <ListMenu menu={menu} />
-              </Suspense>
-            </ul>
-          </div>
-        </div>
+        <SidebarComponent show={show} setShow={setShow} />
+
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
           <div className="p-2 flex justify-between items-center px-6 py-[21px] w-full">
+            <Button
+              onClick={() => setShow(!show)}
+              className="lg:hidden block border border-gray-300"
+            >
+              <Menu />
+            </Button>
+
             <h5>Articles</h5>
             <Suspense>
               <Profile>

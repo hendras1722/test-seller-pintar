@@ -290,7 +290,10 @@ export default function ArticleList() {
               Deleting this article is permanent and cannot be undone. All
               related content will be removed.
             </AlertModal.Description>
-            <AlertModal.Cancel className="bg-transparent hover:bg-transparent t text-black">
+            <AlertModal.Cancel
+              asChild
+              className="bg-transparent hover:bg-transparent mt-2 sm:!mt-0 text-black"
+            >
               Cancel
             </AlertModal.Cancel>
             <AlertModal.Action

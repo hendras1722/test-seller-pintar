@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog'
+import { cn } from '@/utils/lib'
 
 export default function AlertModal({ children, open, onOpenChange, title }) {
   let _buttonModal, _description, _cancel, _action
@@ -53,7 +54,7 @@ export default function AlertModal({ children, open, onOpenChange, title }) {
             <AlertDialogTitle>{title}</AlertDialogTitle>
             {_description}
           </AlertDialogHeader>
-          <div className="flex justify-end gap-3 item-center">
+          <div className="flex justify-end gap-3 items-center">
             {_cancel}
             {_action}
           </div>
@@ -71,7 +72,10 @@ const Description = ({ children }) => (
 )
 
 const Cancel = ({ children, ...props }) => (
-  <AlertDialogCancel className={props.className} onClick={props.onClick}>
+  <AlertDialogCancel
+    className={cn(props.className, '!mt-0')}
+    onClick={props.onClick}
+  >
     {children}
   </AlertDialogCancel>
 )
